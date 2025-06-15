@@ -8,7 +8,7 @@ final class TrackerNavigationController: UINavigationController {
   }
 
   private func setup() {
-    let index = TrackerIndexViewController()
+    let index = TrackerViewController()
     self.setViewControllers([index], animated: true)
 
     navigationBar.prefersLargeTitles = true

@@ -13,7 +13,7 @@ final class IndexTabbarController: UITabBarController {
     tracker.tabBarItem = UITabBarItem(
       title: nil, image: UIImage(named: "tracker_tabbar_item"), tag: 0)
 
-    let statistics = UIViewController()
+    let statistics = StatisticsViewController()
     statistics.tabBarItem = UITabBarItem(
       title: "Statistics", image: UIImage(named: "statistics_tabbar_item"), tag: 1)
 
@@ -23,9 +23,9 @@ final class IndexTabbarController: UITabBarController {
     appearance.configureWithOpaqueBackground()
     appearance.backgroundColor = .ypWhite
     appearance.shadowColor = UIColor.black.withAlphaComponent(0.3)
-    appearance.stackedLayoutAppearance.selected.iconColor = .ypBlue
+    appearance.stackedLayoutAppearance.selected.iconColor = .accent
     appearance.stackedLayoutAppearance.selected.titleTextAttributes = [
-      .foregroundColor: UIColor.ypBlue
+      .foregroundColor: UIColor.accent
     ]
     appearance.stackedLayoutAppearance.normal.iconColor = .ypGray
     appearance.stackedLayoutAppearance.normal.titleTextAttributes = [
