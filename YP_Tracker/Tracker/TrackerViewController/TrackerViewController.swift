@@ -19,6 +19,8 @@ final class TrackerViewController: UIViewController {
         withConfiguration: UIImage.SymbolConfiguration(pointSize: 20, weight: .semibold)),
       style: .plain, target: self, action: nil)
 
+    button.action = #selector(leftNavigationItemButtonTapped)
+
     return button
   }()
 
@@ -90,6 +92,15 @@ final class TrackerViewController: UIViewController {
   @objc func datePickerValueChanged(_ sender: UIDatePicker) {
     selectedDate = sender.date
     collectionView?.reloadData()
+  }
+
+  @objc func leftNavigationItemButtonTapped() {
+    let controller = CreateTrackerNavigationController(
+      rootViewController: CreateTrackerSelectTypeViewController())
+    controller.modalPresentationStyle = .formSheet
+    controller.modalTransitionStyle = .coverVertical
+    // controller.delegate = self
+    present(controller, animated: true, completion: nil)
   }
 }
 
