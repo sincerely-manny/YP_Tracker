@@ -5,6 +5,7 @@ final class CreateTrackerCreateHabitViewController: UIViewController {
 
   private var schedule: [DayOfWeek] = [] {
     didSet {
+      setCreateButtonState()
       if schedule.count == 7 {
         habitSettingsTableView.schedule = ["Каждый день"]
       } else {
@@ -203,6 +204,11 @@ final class CreateTrackerCreateHabitViewController: UIViewController {
     dismiss(animated: true)
   }
 
+  private func setCreateButtonState() {
+    createButton.isEnabled = !(habitNameTextField.text?.isEmpty ?? true) && schedule.count > 0
+    createButton.backgroundColor = createButton.isEnabled ? UIColor.ypBlack : UIColor.ypGray
+  }
+
 }
 
 extension CreateTrackerCreateHabitViewController: UITextFieldValidatedErrorDelegate {
@@ -225,8 +231,7 @@ extension CreateTrackerCreateHabitViewController: UITextFieldValidatedErrorDeleg
   func textFieldDidChange(
     _ textField: UITextFieldValidated, newValue: String?
   ) {
-    createButton.isEnabled = !(newValue?.isEmpty ?? true)
-    createButton.backgroundColor = createButton.isEnabled ? UIColor.ypBlack : UIColor.ypGray
+    setCreateButtonState()
   }
 
 }

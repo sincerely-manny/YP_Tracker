@@ -1,7 +1,7 @@
 import UIKit
 
 final class ScheduleSelectionViewController: UIViewController {
-  let tableData: [DayOfWeek] = daysOfWeek
+  let tableData: [DayOfWeek] = DayOfWeek.allCases.sorted { $0.rawValue < $1.rawValue }
   var selectedDays: Set<DayOfWeek> = []
 
   weak var delegate: ScheduleSelectionViewControllerDelegate?

@@ -128,22 +128,42 @@ let sampleData: [TrackerCategory] = [
   TrackerCategory(
     id: UUID(), name: "Здоровье",
     trackers: [
-      Tracker(id: UUID(), name: "Сон", color: .systemBlue, emoji: "😴", schedule: []),
-      Tracker(id: UUID(), name: "Питание", color: .systemGreen, emoji: "🥗", schedule: []),
       Tracker(
-        id: UUID(), name: "Физическая активность", color: .systemOrange, emoji: "🏋️", schedule: []
-      ),
+        id: UUID(), name: "Сон", color: .systemBlue, emoji: "😴", schedule: DayOfWeek.allCases),
+      Tracker(
+        id: UUID(), name: "Питание", color: .systemGreen, emoji: "🥗", schedule: [DayOfWeek.mon]),
+      Tracker(
+        id: UUID(), name: "Физическая активность", color: .systemOrange, emoji: "🏋️",
+        schedule: [
+          DayOfWeek.mon, DayOfWeek.wed, DayOfWeek.fri,
+        ]),
     ]),
   TrackerCategory(
     id: UUID(), name: "Продуктивность",
     trackers: [
-      Tracker(id: UUID(), name: "Работа", color: .systemPurple, emoji: "💼", schedule: []),
-      Tracker(id: UUID(), name: "Учеба", color: .systemYellow, emoji: "📚", schedule: []),
+      Tracker(
+        id: UUID(), name: "Работа", color: .systemPurple, emoji: "💼",
+        schedule: [
+          DayOfWeek.mon, DayOfWeek.tue, DayOfWeek.wed, DayOfWeek.thu, DayOfWeek.fri,
+        ]),
+      Tracker(
+        id: UUID(), name: "Учеба", color: .systemYellow, emoji: "📚",
+        schedule: [
+          DayOfWeek.mon, DayOfWeek.tue, DayOfWeek.wed, DayOfWeek.thu, DayOfWeek.fri,
+        ]),
     ]),
   TrackerCategory(
     id: UUID(), name: "Хобби",
     trackers: [
-      Tracker(id: UUID(), name: "Чтение", color: .systemPink, emoji: "📖", schedule: []),
-      Tracker(id: UUID(), name: "Рисование", color: .systemTeal, emoji: "🎨", schedule: []),
+      Tracker(
+        id: UUID(), name: "Чтение", color: .systemPink, emoji: "📖",
+        schedule: [
+          DayOfWeek.mon, DayOfWeek.tue, DayOfWeek.wed, DayOfWeek.thu, DayOfWeek.fri,
+        ]),
+      Tracker(
+        id: UUID(), name: "Рисование", color: .systemTeal, emoji: "🎨",
+        schedule: [
+          DayOfWeek.mon, DayOfWeek.tue, DayOfWeek.wed, DayOfWeek.thu, DayOfWeek.fri,
+        ]),
     ]),
 ]
