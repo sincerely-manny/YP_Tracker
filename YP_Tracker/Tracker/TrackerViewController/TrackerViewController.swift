@@ -102,15 +102,10 @@ final class TrackerViewController: UIViewController {
   }
 
   @objc func leftNavigationItemButtonTapped() {
-    // let controller = CreateTrackerNavigationController(
-    //   rootViewController: CreateTrackerSelectTypeViewController())
-
-    let vc = CreateTrackerCreateHabitViewController()
-    vc.delegate = self
     let controller = CreateTrackerNavigationController(
-      rootViewController: vc)
+      rootViewController: CreateTrackerSelectTypeViewController())
+    controller.createTrackerDelegate = self
 
-    // controller.createTrackerDelegate = self
     controller.modalPresentationStyle = .formSheet
     controller.modalTransitionStyle = .coverVertical
     present(controller, animated: true, completion: nil)
@@ -120,8 +115,12 @@ final class TrackerViewController: UIViewController {
     var filtered: [TrackerCategory] = []
     let selectedDayOfWeek = Calendar.current.component(.weekday, from: selectedDate)
     for category in categories {
-      let filteredTrackers = category.trackers.filter {
-        $0.schedule.contains { $0.rawValue == selectedDayOfWeek }
+      let filteredTrackers = category.trackers.filter { tracker in
+        if let schedule = tracker.schedule {
+          return schedule.contains { $0.rawValue == selectedDayOfWeek }
+        } else {
+          return true
+        }
       }
       if !filteredTrackers.isEmpty {
         filtered.append(

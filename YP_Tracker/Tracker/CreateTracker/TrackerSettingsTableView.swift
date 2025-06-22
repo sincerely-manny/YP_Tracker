@@ -1,6 +1,11 @@
 import UIKit
 
-final class HabitSettingsTableView: UITableView, UITableViewDataSource, UITableViewDelegate {
+final class TrackerSettingsTableView: UITableView, UITableViewDataSource, UITableViewDelegate {
+  enum SettingsType {
+    case onlyCategory
+    case full
+  }
+
   var category: String = "" {
     didSet {
       updateRow(at: IndexPath(row: 0, section: 0), detail: category)
@@ -19,7 +24,12 @@ final class HabitSettingsTableView: UITableView, UITableViewDataSource, UITableV
     ("Категория", ""),
     ("Расписание", ""),
   ]
-  init() {
+
+  init(type: SettingsType = .full) {
+    if type == .onlyCategory {
+      rows = [("Категория", "")]
+    }
+
     super.init(frame: .zero, style: .plain)
     setupTableView()
   }

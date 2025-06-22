@@ -1,15 +1,21 @@
 import UIKit
 
-final class CreateTrackerCreateHabitViewController: UIViewController {
+final class CreateTrackerViewController: UIViewController {
   weak var delegate: CreateTrackerDelegate?
+
+  enum TrackerType {
+    case habit
+    case irregularEvent
+  }
+  var trackerType: TrackerType = .habit
 
   private var schedule: [DayOfWeek] = [] {
     didSet {
       setCreateButtonState()
       if schedule.count == 7 {
-        habitSettingsTableView.schedule = ["Каждый день"]
+        trackerSettingsTableView.schedule = ["Каждый день"]
       } else {
-        habitSettingsTableView.schedule = schedule.map { $0.titleShort }
+        trackerSettingsTableView.schedule = schedule.map { $0.titleShort }
       }
     }
   }
@@ -46,8 +52,8 @@ final class CreateTrackerCreateHabitViewController: UIViewController {
     return label
   }()
 
-  private lazy var habitSettingsTableView: HabitSettingsTableView = {
-    let tableView = HabitSettingsTableView()
+  private lazy var trackerSettingsTableView: TrackerSettingsTableView = {
+    let tableView = TrackerSettingsTableView(type: trackerType == .habit ? .full : .onlyCategory)
     tableView.category = sampleData[0].name
     tableView.translatesAutoresizingMaskIntoConstraints = false
     tableView.didTapSchedule = { [weak self] in
@@ -93,13 +99,22 @@ final class CreateTrackerCreateHabitViewController: UIViewController {
     return button
   }()
 
+  init(trackerType: TrackerType = .habit) {
+    self.trackerType = trackerType
+    super.init(nibName: nil, bundle: nil)
+  }
+
+  required init?(coder: NSCoder) {
+    fatalError("init(coder:) has not been implemented")
+  }
+
   override func viewDidLoad() {
     super.viewDidLoad()
     setupView()
   }
 
   private func setupView() {
-    title = "Новая привычка"
+    title = trackerType == .habit ? "Новая привычка" : "Новое нерегулярное событие"
     view.backgroundColor = .ypWhite
     view.layoutMargins = UIEdgeInsets(top: 24, left: 16, bottom: 0, right: 16)
 
@@ -136,16 +151,16 @@ final class CreateTrackerCreateHabitViewController: UIViewController {
         equalTo: textFieldContainerView.trailingAnchor),
     ])
 
-    habitSettingsTableView.translatesAutoresizingMaskIntoConstraints = false
-    view.addSubview(habitSettingsTableView)
+    trackerSettingsTableView.translatesAutoresizingMaskIntoConstraints = false
+    view.addSubview(trackerSettingsTableView)
     NSLayoutConstraint.activate([
-      habitSettingsTableView.topAnchor.constraint(
+      trackerSettingsTableView.topAnchor.constraint(
         equalTo: textFieldContainerView.bottomAnchor, constant: 16),
-      habitSettingsTableView.leadingAnchor.constraint(
+      trackerSettingsTableView.leadingAnchor.constraint(
         equalTo: view.layoutMarginsGuide.leadingAnchor),
-      habitSettingsTableView.trailingAnchor.constraint(
+      trackerSettingsTableView.trailingAnchor.constraint(
         equalTo: view.layoutMarginsGuide.trailingAnchor),
-      habitSettingsTableView.bottomAnchor.constraint(
+      trackerSettingsTableView.bottomAnchor.constraint(
         equalTo: view.layoutMarginsGuide.bottomAnchor),
     ])
 
@@ -200,7 +215,7 @@ final class CreateTrackerCreateHabitViewController: UIViewController {
         .systemPink, .systemTeal, .systemIndigo,
       ].randomElement() ?? .systemGray,
       emoji: ["🏃", "🍎", "💧", "🧘", "📚", "🎨"].randomElement() ?? "✅",
-      schedule: schedule,
+      schedule: schedule.isEmpty ? nil : schedule,
     )
     assert(delegate != nil, "Delegate must be set before creating a tracker")
     delegate?.trackerCreated(tracker: tracker, categoryId: categoryId)
@@ -208,13 +223,18 @@ final class CreateTrackerCreateHabitViewController: UIViewController {
   }
 
   private func setCreateButtonState() {
-    createButton.isEnabled = !(habitNameTextField.text?.isEmpty ?? true) && schedule.count > 0
+    if trackerType == .irregularEvent {
+      createButton.isEnabled = !(habitNameTextField.text?.isEmpty ?? true)
+    } else {
+      createButton.isEnabled = !(habitNameTextField.text?.isEmpty ?? true) && schedule.count > 0
+    }
+
     createButton.backgroundColor = createButton.isEnabled ? UIColor.ypBlack : UIColor.ypGray
   }
 
 }
 
-extension CreateTrackerCreateHabitViewController: UITextFieldValidatedErrorDelegate {
+extension CreateTrackerViewController: UITextFieldValidatedErrorDelegate {
   func textFieldDidAddError(
     _ textField: UITextFieldValidated, error: UITextFieldValidated.ErrorType
   ) {
@@ -239,7 +259,7 @@ extension CreateTrackerCreateHabitViewController: UITextFieldValidatedErrorDeleg
 
 }
 
-extension CreateTrackerCreateHabitViewController: ScheduleSelectionViewControllerDelegate {
+extension CreateTrackerViewController: ScheduleSelectionViewControllerDelegate {
   func scheduleSelectionViewController(
     _ controller: ScheduleSelectionViewController,
     didSelectDays days: Set<DayOfWeek>

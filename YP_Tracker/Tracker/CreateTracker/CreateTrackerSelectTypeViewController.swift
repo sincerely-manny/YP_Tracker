@@ -65,25 +65,26 @@ final class CreateTrackerSelectTypeViewController: UIViewController {
 
   @objc private func trackerTypeSelected(_ sender: UIButton) {
     guard let trackerType = sender.titleLabel?.text else { return }
+    var type: CreateTrackerViewController.TrackerType = .habit
     switch trackerType {
     case "Привычка":
-      let vc = CreateTrackerCreateHabitViewController()
-      if let navigationController = navigationController as? CreateTrackerNavigationController,
-        let createTrackerDelegate = navigationController.createTrackerDelegate
-      {
-        vc.delegate = createTrackerDelegate
-      } else {
-        assertionFailure(
-          "NavigationController is not of type CreateTrackerNavigationController or delegate is nil"
-        )
-      }
-      navigationController?.pushViewController(vc, animated: true)
-    // case "Нерегулярное событие":
-    // navigationController?.pushViewController(
-    //   CreateTrackerCreateEventViewController(), animated: true)
+      type = .habit
+    case "Нерегулярное событие":
+      type = .irregularEvent
     default:
-      break
+      type = .irregularEvent
     }
+    let vc = CreateTrackerViewController(trackerType: type)
+    if let navigationController = navigationController as? CreateTrackerNavigationController,
+      let createTrackerDelegate = navigationController.createTrackerDelegate
+    {
+      vc.delegate = createTrackerDelegate
+    } else {
+      assertionFailure(
+        "NavigationController is not of type CreateTrackerNavigationController or delegate is nil"
+      )
+    }
+    navigationController?.pushViewController(vc, animated: true)
 
   }
 }
