@@ -9,27 +9,23 @@ private let daysOfWeek: [(index: Int, titleShort: String, titleFull: String)] = 
     let titleShort = titlesShort[index]
     return (index: index, titleShort: titleShort, titleFull: titleFull.capitalized)
   }
-  return Array(days[1...6] + days[0...0])
+  return days
 }()
 
 enum DayOfWeek: Int, CaseIterable, Hashable {
-  case mon
-  case tue
-  case wed
-  case thu
-  case fri
-  case sat
-  case sun
-
-  var index: Int {
-    self.rawValue
-  }
+  case mon = 2
+  case tue = 3
+  case wed = 4
+  case thu = 5
+  case fri = 6
+  case sat = 7
+  case sun = 1
 
   var titleShort: String {
-    daysOfWeek[self.index].titleShort
+    daysOfWeek[self.rawValue - 1].titleShort
   }
 
   var titleFull: String {
-    daysOfWeek[self.index].titleFull
+    daysOfWeek[self.rawValue - 1].titleFull
   }
 }

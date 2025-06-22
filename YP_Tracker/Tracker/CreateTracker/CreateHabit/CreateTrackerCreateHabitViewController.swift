@@ -195,8 +195,11 @@ final class CreateTrackerCreateHabitViewController: UIViewController {
     let tracker = Tracker(
       id: UUID(),
       name: habitName,
-      color: .ypBlue,
-      emoji: "🏃",
+      color: [
+        .systemRed, .systemGreen, .systemBlue, .systemOrange, .systemPurple, .systemYellow,
+        .systemPink, .systemTeal, .systemIndigo,
+      ].randomElement() ?? .systemGray,
+      emoji: ["🏃", "🍎", "💧", "🧘", "📚", "🎨"].randomElement() ?? "✅",
       schedule: schedule,
     )
 
@@ -241,6 +244,10 @@ extension CreateTrackerCreateHabitViewController: ScheduleSelectionViewControlle
     _ controller: ScheduleSelectionViewController,
     didSelectDays days: Set<DayOfWeek>
   ) {
-    self.schedule = days.sorted { $0.index < $1.index }
+    self.schedule = days.sorted { day1, day2 in
+      let order1 = day1 == .sun ? 8 : day1.rawValue
+      let order2 = day2 == .sun ? 8 : day2.rawValue
+      return order1 < order2
+    }
   }
 }

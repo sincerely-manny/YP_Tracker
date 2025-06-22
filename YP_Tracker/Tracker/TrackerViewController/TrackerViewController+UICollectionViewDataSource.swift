@@ -2,19 +2,19 @@ import UIKit
 
 extension TrackerViewController: UICollectionViewDataSource {
   func numberOfSections(in collectionView: UICollectionView) -> Int {
-    if categories.isEmpty {
+    if filteredTrackers.isEmpty {
       collectionView.backgroundView?.isHidden = false
     } else {
       collectionView.backgroundView?.isHidden = true
     }
 
-    return categories.count
+    return filteredTrackers.count
   }
 
   func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int)
     -> Int
   {
-    return categories[section].trackers.count
+    return filteredTrackers[section].trackers.count
   }
 
   func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath)
@@ -28,7 +28,7 @@ extension TrackerViewController: UICollectionViewDataSource {
       fatalError("Unable to dequeue TrackerCollectionViewCell")
     }
 
-    let tracker = categories[indexPath.section].trackers[indexPath.item]
+    let tracker = filteredTrackers[indexPath.section].trackers[indexPath.item]
     cell.delegate = self
     cell.isCompleted = trackerCompletedForDate(id: tracker.id, date: selectedDate)
     cell.trackerCompletedTimes = trackerCompletedTimes(id: tracker.id)
@@ -49,7 +49,7 @@ extension TrackerViewController: UICollectionViewDataSource {
       else {
         fatalError("Unable to dequeue TrackerCollectionViewHeader")
       }
-      header.configure(with: categories[indexPath.section].name)
+      header.configure(with: filteredTrackers[indexPath.section].name)
       return header
     } else if kind == UICollectionView.elementKindSectionFooter {
       guard

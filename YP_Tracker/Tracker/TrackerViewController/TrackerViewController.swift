@@ -2,9 +2,15 @@ import UIKit
 
 final class TrackerViewController: UIViewController {
   private var collectionView: UICollectionView?
-  var categories: [TrackerCategory] = sampleData
   var completedTrackers: [TrackerRecord] = []
   var selectedDate: Date = Date()
+
+  var categories: [TrackerCategory] = sampleData {
+    didSet { setFilteredTrackers() }
+  }
+  var filteredTrackers: [TrackerCategory] = [] {
+    didSet { collectionView?.reloadData() }
+  }
 
   private let dateFormatter: DateFormatter = {
     let formatter = DateFormatter()
@@ -48,6 +54,7 @@ final class TrackerViewController: UIViewController {
 
   override func viewDidLoad() {
     super.viewDidLoad()
+    setFilteredTrackers()
     setupView()
   }
 
@@ -91,7 +98,7 @@ final class TrackerViewController: UIViewController {
 
   @objc func datePickerValueChanged(_ sender: UIDatePicker) {
     selectedDate = sender.date
-    collectionView?.reloadData()
+    setFilteredTrackers()
   }
 
   @objc func leftNavigationItemButtonTapped() {
@@ -102,11 +109,29 @@ final class TrackerViewController: UIViewController {
     controller.modalTransitionStyle = .coverVertical
     present(controller, animated: true, completion: nil)
   }
+
+  private func setFilteredTrackers() {
+    var filtered: [TrackerCategory] = []
+    let selectedDayOfWeek = Calendar.current.component(.weekday, from: selectedDate)
+    print(
+      "Selected date: \(dateFormatter.string(from: selectedDate)), day of week: \(selectedDayOfWeek)"
+    )
+    for category in categories {
+      let filteredTrackers = category.trackers.filter {
+        $0.schedule.contains { $0.rawValue == selectedDayOfWeek }
+      }
+      if !filteredTrackers.isEmpty {
+        filtered.append(
+          TrackerCategory(
+            id: category.id, name: category.name, trackers: filteredTrackers))
+      }
+    }
+    filteredTrackers = filtered
+  }
 }
 
 extension TrackerViewController: CreateTrackerDelegate {
   func trackerCreated(tracker: Tracker, categoryId: UUID) {
-    print("Tracker created: \(tracker.name) in category with id \(categoryId)")
     let categoryIndex = categories.firstIndex(where: { $0.id == categoryId })
     assert(categoryIndex != nil, "Category with id \(categoryId) not found.")
     if let categoryIndex {
