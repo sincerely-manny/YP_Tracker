@@ -13,7 +13,7 @@ final class CreateTrackerCreateHabitViewController: UIViewController {
       }
     }
   }
-  private var categoryId: UUID? = sampleData[0].id
+  private var categoryId: UUID = sampleData[0].id
 
   private lazy var textFieldContainerView: UIView = {
     let view = UIView()
@@ -202,8 +202,8 @@ final class CreateTrackerCreateHabitViewController: UIViewController {
       emoji: ["🏃", "🍎", "💧", "🧘", "📚", "🎨"].randomElement() ?? "✅",
       schedule: schedule,
     )
-
-    delegate?.trackerCreated(tracker: tracker, categoryId: categoryId ?? UUID())
+    assert(delegate != nil, "Delegate must be set before creating a tracker")
+    delegate?.trackerCreated(tracker: tracker, categoryId: categoryId)
     dismiss(animated: true)
   }
 

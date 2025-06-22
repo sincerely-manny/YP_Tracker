@@ -102,9 +102,15 @@ final class TrackerViewController: UIViewController {
   }
 
   @objc func leftNavigationItemButtonTapped() {
+    // let controller = CreateTrackerNavigationController(
+    //   rootViewController: CreateTrackerSelectTypeViewController())
+
+    let vc = CreateTrackerCreateHabitViewController()
+    vc.delegate = self
     let controller = CreateTrackerNavigationController(
-      rootViewController: CreateTrackerSelectTypeViewController())
-    controller.createTrackerDelegate = self
+      rootViewController: vc)
+
+    // controller.createTrackerDelegate = self
     controller.modalPresentationStyle = .formSheet
     controller.modalTransitionStyle = .coverVertical
     present(controller, animated: true, completion: nil)
@@ -113,9 +119,6 @@ final class TrackerViewController: UIViewController {
   private func setFilteredTrackers() {
     var filtered: [TrackerCategory] = []
     let selectedDayOfWeek = Calendar.current.component(.weekday, from: selectedDate)
-    print(
-      "Selected date: \(dateFormatter.string(from: selectedDate)), day of week: \(selectedDayOfWeek)"
-    )
     for category in categories {
       let filteredTrackers = category.trackers.filter {
         $0.schedule.contains { $0.rawValue == selectedDayOfWeek }
@@ -154,7 +157,7 @@ let sampleData: [TrackerCategory] = [
     id: UUID(), name: "Здоровье",
     trackers: [
       Tracker(
-        id: UUID(), name: "Сон", color: .systemBlue, emoji: "😴", schedule: DayOfWeek.allCases),
+        id: UUID(), name: "Сон", color: .systemBlue, emoji: "😴", schedule: [DayOfWeek.mon]),
       Tracker(
         id: UUID(), name: "Питание", color: .systemGreen, emoji: "🥗", schedule: [DayOfWeek.mon]),
       Tracker(
