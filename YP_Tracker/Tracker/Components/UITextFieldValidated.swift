@@ -7,17 +7,39 @@ final class UITextFieldValidated: UITextField, UITextFieldDelegate {
   var maxLength: Int? = nil
   var dismissKeyboardOnReturn: Bool = false
   weak var errorDelegate: UITextFieldValidatedErrorDelegate?
+  var observer: (any NSObjectProtocol)?
 
   private var errors: Set<ErrorType> = []
 
+  override var text: String? {
+    didSet {
+      errorDelegate?.textFieldDidChange(self, newValue: text)
+    }
+  }
+
   override init(frame: CGRect) {
     super.init(frame: frame)
+    observer = NotificationCenter.default
+      .addObserver(
+        forName: UITextField.textDidChangeNotification,
+        object: self, queue: .main
+      ) { [weak self] _ in
+        guard let self = self else { return }
+        self.errorDelegate?.textFieldDidChange(self, newValue: self.text)
+      }
+
     self.delegate = self
   }
 
   required init?(coder: NSCoder) {
     super.init(coder: coder)
     self.delegate = self
+  }
+
+  deinit {
+    if let observer {
+      NotificationCenter.default.removeObserver(observer)
+    }
   }
 
   func textField(
@@ -27,8 +49,10 @@ final class UITextFieldValidated: UITextField, UITextFieldDelegate {
     guard let currentText = textField.text else { return true }
     guard let maxLength else { return true }
     let newLength = currentText.count + string.count - range.length
+
     if newLength <= maxLength {
       removeError(.overMaxLength)
+
       return true
     } else {
       addError(.overMaxLength)
@@ -78,4 +102,7 @@ protocol UITextFieldValidatedErrorDelegate: AnyObject {
     _ textField: UITextFieldValidated, error: UITextFieldValidated.ErrorType)
   func textFieldDidRemoveError(
     _ textField: UITextFieldValidated, error: UITextFieldValidated.ErrorType)
+  func textFieldDidChange(
+    _ textField: UITextFieldValidated, newValue: String?
+  )
 }

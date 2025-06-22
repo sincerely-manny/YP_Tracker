@@ -97,10 +97,30 @@ final class TrackerViewController: UIViewController {
   @objc func leftNavigationItemButtonTapped() {
     let controller = CreateTrackerNavigationController(
       rootViewController: CreateTrackerSelectTypeViewController())
+    controller.createTrackerDelegate = self
     controller.modalPresentationStyle = .formSheet
     controller.modalTransitionStyle = .coverVertical
-    // controller.delegate = self
     present(controller, animated: true, completion: nil)
+  }
+}
+
+extension TrackerViewController: CreateTrackerDelegate {
+  func trackerCreated(tracker: Tracker, categoryId: UUID) {
+    print("Tracker created: \(tracker.name) in category with id \(categoryId)")
+    let categoryIndex = categories.firstIndex(where: { $0.id == categoryId })
+    assert(categoryIndex != nil, "Category with id \(categoryId) not found.")
+    if let categoryIndex {
+      let category = categories[categoryIndex]
+      let newCategory = TrackerCategory(
+        id: category.id, name: category.name,
+        trackers: category.trackers + [tracker])
+      categories[categoryIndex] = newCategory
+      let section = IndexSet(integer: categoryIndex)
+      collectionView?.performBatchUpdates(
+        {
+          collectionView?.reloadSections(section)
+        }, completion: nil)
+    }
   }
 }
 
@@ -108,22 +128,22 @@ let sampleData: [TrackerCategory] = [
   TrackerCategory(
     id: UUID(), name: "Здоровье",
     trackers: [
-      Tracker(id: UUID(), name: "Сон", color: .systemBlue, emoji: "😴", schedule: nil),
-      Tracker(id: UUID(), name: "Питание", color: .systemGreen, emoji: "🥗", schedule: nil),
+      Tracker(id: UUID(), name: "Сон", color: .systemBlue, emoji: "😴", schedule: []),
+      Tracker(id: UUID(), name: "Питание", color: .systemGreen, emoji: "🥗", schedule: []),
       Tracker(
-        id: UUID(), name: "Физическая активность", color: .systemOrange, emoji: "🏋️", schedule: nil
+        id: UUID(), name: "Физическая активность", color: .systemOrange, emoji: "🏋️", schedule: []
       ),
     ]),
   TrackerCategory(
     id: UUID(), name: "Продуктивность",
     trackers: [
-      Tracker(id: UUID(), name: "Работа", color: .systemPurple, emoji: "💼", schedule: nil),
-      Tracker(id: UUID(), name: "Учеба", color: .systemYellow, emoji: "📚", schedule: nil),
+      Tracker(id: UUID(), name: "Работа", color: .systemPurple, emoji: "💼", schedule: []),
+      Tracker(id: UUID(), name: "Учеба", color: .systemYellow, emoji: "📚", schedule: []),
     ]),
   TrackerCategory(
     id: UUID(), name: "Хобби",
     trackers: [
-      Tracker(id: UUID(), name: "Чтение", color: .systemPink, emoji: "📖", schedule: nil),
-      Tracker(id: UUID(), name: "Рисование", color: .systemTeal, emoji: "🎨", schedule: nil),
+      Tracker(id: UUID(), name: "Чтение", color: .systemPink, emoji: "📖", schedule: []),
+      Tracker(id: UUID(), name: "Рисование", color: .systemTeal, emoji: "🎨", schedule: []),
     ]),
 ]

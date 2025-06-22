@@ -3,6 +3,7 @@ import UIKit
 final class CreateTrackerNavigationController: UINavigationController,
   UINavigationControllerDelegate
 {
+  weak var createTrackerDelegate: CreateTrackerDelegate?
 
   override func viewDidLoad() {
     super.viewDidLoad()

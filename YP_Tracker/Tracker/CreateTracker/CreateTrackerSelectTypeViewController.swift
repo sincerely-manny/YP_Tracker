@@ -15,6 +15,7 @@ final class CreateTrackerSelectTypeViewController: UIViewController {
 
   private func setupView() {
     title = "Создание трекера"
+    view.backgroundColor = .ypWhite
     view.addSubview(buttonsContainerView)
 
     NSLayoutConstraint.activate([
@@ -66,8 +67,17 @@ final class CreateTrackerSelectTypeViewController: UIViewController {
     guard let trackerType = sender.titleLabel?.text else { return }
     switch trackerType {
     case "Привычка":
-      navigationController?.pushViewController(
-        CreateTrackerCreateHabitViewController(), animated: true)
+      let vc = CreateTrackerCreateHabitViewController()
+      if let navigationController = navigationController as? CreateTrackerNavigationController,
+        let createTrackerDelegate = navigationController.createTrackerDelegate
+      {
+        vc.delegate = createTrackerDelegate
+      } else {
+        assertionFailure(
+          "NavigationController is not of type CreateTrackerNavigationController or delegate is nil"
+        )
+      }
+      navigationController?.pushViewController(vc, animated: true)
     // case "Нерегулярное событие":
     // navigationController?.pushViewController(
     //   CreateTrackerCreateEventViewController(), animated: true)
