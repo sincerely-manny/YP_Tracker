@@ -114,6 +114,12 @@ final class CreateTrackerViewController: UIViewController {
     view.backgroundColor = .ypWhite
     view.layoutMargins = UIEdgeInsets(top: 24, left: 16, bottom: 0, right: 16)
 
+    setupTextField()
+    setupTrackerSettingsTableView()
+    setupBottomButtons()
+  }
+
+  private func setupTextField() {
     view.addSubview(textFieldContainerView)
 
     NSLayoutConstraint.activate([
@@ -146,8 +152,9 @@ final class CreateTrackerViewController: UIViewController {
       habitNameTextFieldErrorLabel.trailingAnchor.constraint(
         equalTo: textFieldContainerView.trailingAnchor),
     ])
+  }
 
-    trackerSettingsTableView.translatesAutoresizingMaskIntoConstraints = false
+  private func setupTrackerSettingsTableView() {
     view.addSubview(trackerSettingsTableView)
     NSLayoutConstraint.activate([
       trackerSettingsTableView.topAnchor.constraint(
@@ -159,7 +166,9 @@ final class CreateTrackerViewController: UIViewController {
       trackerSettingsTableView.bottomAnchor.constraint(
         equalTo: view.layoutMarginsGuide.bottomAnchor),
     ])
+  }
 
+  private func setupBottomButtons() {
     view.addSubview(bottomButtonsContainerView)
     NSLayoutConstraint.activate([
       bottomButtonsContainerView.leadingAnchor.constraint(
@@ -194,7 +203,6 @@ final class CreateTrackerViewController: UIViewController {
       createButton.bottomAnchor.constraint(
         equalTo: bottomButtonsContainerView.bottomAnchor),
     ])
-
   }
 
   @objc private func cancelButtonTapped() {
