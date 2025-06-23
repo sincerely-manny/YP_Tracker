@@ -74,7 +74,7 @@ final class CreateTrackerViewController: UIViewController {
 
   private lazy var cancelButton: UIButton = {
     let button = UIButton(type: .system)
-    button.setTitle("Отмена", for: .normal)
+    button.setTitle("Отменить", for: .normal)
     button.setTitleColor(.ypRed, for: .normal)
     button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
     button.backgroundColor = .clear

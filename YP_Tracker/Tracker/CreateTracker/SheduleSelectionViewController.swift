@@ -9,6 +9,9 @@ final class ScheduleSelectionViewController: UIViewController {
   private lazy var scheduleTableView: UITableView = {
     let tableView = UITableView()
     tableView.rowHeight = 75
+    tableView.separatorStyle = .singleLine
+    tableView.separatorColor = .ypGray
+    tableView.separatorInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
     tableView.translatesAutoresizingMaskIntoConstraints = false
     tableView.dataSource = self
     tableView.delegate = self
@@ -68,6 +71,8 @@ final class ScheduleSelectionViewController: UIViewController {
     guard let cell = sender.superview as? UITableViewCell,
       let indexPath = scheduleTableView.indexPath(for: cell)
     else { return }
+    cell.textLabel?.font = .systemFont(ofSize: 17, weight: .regular)
+    cell.textLabel?.textColor = .ypBlack
     let day = tableData[indexPath.row]
 
     if sender.isOn {

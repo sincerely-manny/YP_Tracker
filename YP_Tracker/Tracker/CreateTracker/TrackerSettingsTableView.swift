@@ -8,7 +8,7 @@ final class TrackerSettingsTableView: UITableView, UITableViewDataSource, UITabl
 
   var category: String = "" {
     didSet {
-      updateRow(at: IndexPath(row: 0, section: 0), detail: category)
+      // updateRow(at: IndexPath(row: 0, section: 0), detail: category)
     }
   }
   var schedule: [String] = [] {
@@ -43,6 +43,7 @@ final class TrackerSettingsTableView: UITableView, UITableViewDataSource, UITabl
     separatorColor = .ypGray
     separatorInset = UIEdgeInsets(
       top: 0, left: 16, bottom: 0, right: 16)
+    rowHeight = 75
     backgroundColor = .clear
     dataSource = self
     delegate = self
@@ -62,6 +63,7 @@ final class TrackerSettingsTableView: UITableView, UITableViewDataSource, UITabl
     cell.textLabel?.font = .systemFont(ofSize: 17, weight: .regular)
     cell.textLabel?.textColor = .ypBlack
     cell.accessoryType = .disclosureIndicator
+    cell.layoutMargins = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 22)
     cell.selectionStyle = .none
     cell.backgroundColor = .clear
     cell.detailTextLabel?.text = rows[indexPath.row].detail
