@@ -3,10 +3,6 @@ import UIKit
 final class CreateTrackerViewController: UIViewController {
   weak var delegate: CreateTrackerDelegate?
 
-  enum TrackerType {
-    case habit
-    case irregularEvent
-  }
   var trackerType: TrackerType = .habit
 
   private var schedule: [DayOfWeek] = [] {
@@ -57,7 +53,7 @@ final class CreateTrackerViewController: UIViewController {
     tableView.category = sampleData[0].name
     tableView.translatesAutoresizingMaskIntoConstraints = false
     tableView.didTapSchedule = { [weak self] in
-      guard let self = self else { return }
+      guard let self else { return }
       let vc = ScheduleSelectionViewController(selectedDays: Set(self.schedule))
       vc.delegate = self
       self.navigationController?.pushViewController(
@@ -114,7 +110,7 @@ final class CreateTrackerViewController: UIViewController {
   }
 
   private func setupView() {
-    title = trackerType == .habit ? "Новая привычка" : "Новое нерегулярное событие"
+    title = trackerType.title
     view.backgroundColor = .ypWhite
     view.layoutMargins = UIEdgeInsets(top: 24, left: 16, bottom: 0, right: 16)
 

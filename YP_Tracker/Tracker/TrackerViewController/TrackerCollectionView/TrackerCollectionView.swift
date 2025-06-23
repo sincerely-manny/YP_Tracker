@@ -51,7 +51,7 @@ final class TrackerCollectionView: UICollectionView {
     let emptyPlaceholder = TrackerEmptyListPlaceholder()
     backgroundColor = .clear
     backgroundView = emptyPlaceholder
-    guard let backgroundView = backgroundView else { return }
+    guard let backgroundView else { return }
     backgroundView.frame = bounds
     backgroundView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
   }

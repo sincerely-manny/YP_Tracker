@@ -24,7 +24,7 @@ final class UITextFieldValidated: UITextField, UITextFieldDelegate {
         forName: UITextField.textDidChangeNotification,
         object: self, queue: .main
       ) { [weak self] _ in
-        guard let self = self else { return }
+        guard let self else { return }
         self.errorDelegate?.textFieldDidChange(self, newValue: self.text)
       }
 
@@ -46,8 +46,7 @@ final class UITextFieldValidated: UITextField, UITextFieldDelegate {
     _ textField: UITextField, shouldChangeCharactersIn range: NSRange,
     replacementString string: String
   ) -> Bool {
-    guard let currentText = textField.text else { return true }
-    guard let maxLength else { return true }
+    guard let currentText = textField.text, let maxLength else { return true }
     let newLength = currentText.count + string.count - range.length
 
     if newLength <= maxLength {
@@ -61,7 +60,7 @@ final class UITextFieldValidated: UITextField, UITextFieldDelegate {
   }
 
   func textFieldDidEndEditing(_ textField: UITextField) {
-    guard let maxLength = maxLength else { return }
+    guard let maxLength else { return }
     if let text = textField.text, text.count > maxLength {
       addError(.overMaxLength)
     } else {

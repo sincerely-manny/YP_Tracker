@@ -4,11 +4,11 @@ final class IndexTabbarController: UITabBarController {
 
   override func viewDidLoad() {
     super.viewDidLoad()
-    setup()
+    setupTabs()
+    setupAppearance()
   }
 
-  private func setup() {
-    view.backgroundColor = .ypWhite
+  private func setupTabs() {
     let tracker = TrackerNavigationController()
     tracker.tabBarItem = UITabBarItem(
       title: nil, image: UIImage(named: "tracker_tabbar_item"), tag: 0)
@@ -18,7 +18,10 @@ final class IndexTabbarController: UITabBarController {
       title: "Statistics", image: UIImage(named: "statistics_tabbar_item"), tag: 1)
 
     viewControllers = [tracker, statistics]
+  }
 
+  private func setupAppearance() {
+    view.backgroundColor = .ypWhite
     let appearance = UITabBarAppearance()
     appearance.configureWithOpaqueBackground()
     appearance.backgroundColor = .ypWhite

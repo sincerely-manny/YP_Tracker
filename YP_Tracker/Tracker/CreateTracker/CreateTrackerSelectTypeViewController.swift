@@ -1,7 +1,6 @@
 import UIKit
 
 final class CreateTrackerSelectTypeViewController: UIViewController {
-  private let trackerTypes: [String] = ["Привычка", "Нерегулярное событие"]
   private lazy var buttonsContainerView: UIView = {
     let view = UIView()
     view.translatesAutoresizingMaskIntoConstraints = false
@@ -32,14 +31,15 @@ final class CreateTrackerSelectTypeViewController: UIViewController {
     let buttonHeight: CGFloat = 60
     let spacing: CGFloat = 16
 
-    for type in trackerTypes {
+    for type in TrackerType.allCases {
       let button = UIButton(type: .system)
       button.translatesAutoresizingMaskIntoConstraints = false
-      button.setTitle(type, for: .normal)
+      button.setTitle(type.title, for: .normal)
       button.setTitleColor(.ypWhite, for: .normal)
       button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
       button.backgroundColor = UIColor.ypBlack
       button.layer.cornerRadius = 16
+      button.tag = type.rawValue
       button.addTarget(self, action: #selector(trackerTypeSelected(_:)), for: .touchUpInside)
       buttonsContainerView.addSubview(button)
 
@@ -64,17 +64,9 @@ final class CreateTrackerSelectTypeViewController: UIViewController {
   }
 
   @objc private func trackerTypeSelected(_ sender: UIButton) {
-    guard let trackerType = sender.titleLabel?.text else { return }
-    var type: CreateTrackerViewController.TrackerType = .habit
-    switch trackerType {
-    case "Привычка":
-      type = .habit
-    case "Нерегулярное событие":
-      type = .irregularEvent
-    default:
-      type = .irregularEvent
-    }
-    let vc = CreateTrackerViewController(trackerType: type)
+    assert(sender.tag < TrackerType.allCases.count, "Invalid tracker type selected")
+    let trackerType = TrackerType.allCases[sender.tag]
+    let vc = CreateTrackerViewController(trackerType: trackerType)
     if let navigationController = navigationController as? CreateTrackerNavigationController,
       let createTrackerDelegate = navigationController.createTrackerDelegate
     {
