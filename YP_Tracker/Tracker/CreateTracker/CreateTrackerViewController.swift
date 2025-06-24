@@ -20,6 +20,9 @@ final class CreateTrackerViewController: UIViewController {
   private lazy var textFieldContainerView: UIView = {
     let view = UIView()
     view.translatesAutoresizingMaskIntoConstraints = false
+    view.backgroundColor = .ypBackground
+    view.layer.cornerRadius = 16
+
     return view
   }()
 
@@ -115,8 +118,8 @@ final class CreateTrackerViewController: UIViewController {
     view.layoutMargins = UIEdgeInsets(top: 24, left: 16, bottom: 0, right: 16)
 
     setupTextField()
-    setupTrackerSettingsTableView()
     setupBottomButtons()
+    setupTrackerSettingsTableView()
   }
 
   private func setupTextField() {
@@ -151,20 +154,6 @@ final class CreateTrackerViewController: UIViewController {
         equalTo: textFieldContainerView.leadingAnchor),
       habitNameTextFieldErrorLabel.trailingAnchor.constraint(
         equalTo: textFieldContainerView.trailingAnchor),
-    ])
-  }
-
-  private func setupTrackerSettingsTableView() {
-    view.addSubview(trackerSettingsTableView)
-    NSLayoutConstraint.activate([
-      trackerSettingsTableView.topAnchor.constraint(
-        equalTo: textFieldContainerView.bottomAnchor, constant: 16),
-      trackerSettingsTableView.leadingAnchor.constraint(
-        equalTo: view.layoutMarginsGuide.leadingAnchor),
-      trackerSettingsTableView.trailingAnchor.constraint(
-        equalTo: view.layoutMarginsGuide.trailingAnchor),
-      trackerSettingsTableView.bottomAnchor.constraint(
-        equalTo: view.layoutMarginsGuide.bottomAnchor),
     ])
   }
 
@@ -205,6 +194,20 @@ final class CreateTrackerViewController: UIViewController {
     ])
   }
 
+  private func setupTrackerSettingsTableView() {
+    view.addSubview(trackerSettingsTableView)
+    NSLayoutConstraint.activate([
+      trackerSettingsTableView.topAnchor.constraint(
+        equalTo: textFieldContainerView.bottomAnchor, constant: 24),
+      trackerSettingsTableView.leadingAnchor.constraint(
+        equalTo: view.layoutMarginsGuide.leadingAnchor),
+      trackerSettingsTableView.trailingAnchor.constraint(
+        equalTo: view.layoutMarginsGuide.trailingAnchor),
+      trackerSettingsTableView.bottomAnchor.constraint(
+        equalTo: bottomButtonsContainerView.topAnchor, constant: -24),
+    ])
+  }
+
   @objc private func cancelButtonTapped() {
     dismiss(animated: true)
   }
@@ -219,7 +222,7 @@ final class CreateTrackerViewController: UIViewController {
         .systemPink, .systemTeal, .systemIndigo,
       ].randomElement() ?? .systemGray,
       emoji: ["🏃", "🍎", "💧", "🧘", "📚", "🎨"].randomElement() ?? "✅",
-      schedule: schedule.isEmpty ? nil : schedule,
+      schedule: schedule.isEmpty ? nil : schedule
     )
     assert(delegate != nil, "Delegate must be set before creating a tracker")
     delegate?.trackerCreated(tracker: tracker, categoryId: categoryId)

@@ -15,6 +15,8 @@ final class ScheduleSelectionViewController: UIViewController {
     tableView.translatesAutoresizingMaskIntoConstraints = false
     tableView.dataSource = self
     tableView.delegate = self
+    tableView.showsVerticalScrollIndicator = false
+    tableView.alwaysBounceVertical = false
     return tableView
   }()
 
@@ -61,8 +63,8 @@ final class ScheduleSelectionViewController: UIViewController {
 
     NSLayoutConstraint.activate([
       scheduleTableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-      scheduleTableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-      scheduleTableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+      scheduleTableView.leadingAnchor.constraint(equalTo: view.layoutMarginsGuide.leadingAnchor),
+      scheduleTableView.trailingAnchor.constraint(equalTo: view.layoutMarginsGuide.trailingAnchor),
       scheduleTableView.bottomAnchor.constraint(equalTo: doneButton.topAnchor, constant: -16),
     ])
   }
@@ -104,16 +106,29 @@ extension ScheduleSelectionViewController: UITableViewDataSource, UITableViewDel
     switchView.isOn = selectedDays.contains(day)
     switchView.addTarget(self, action: #selector(switchValueChanged(_:)), for: .valueChanged)
     cell.accessoryView = switchView
+
+    cell.layer.cornerRadius = 16
+    cell.layer.masksToBounds = true
+    cell.backgroundColor = UIColor.ypBackground
+
     return cell
   }
 
   func tableView(
     _ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath
   ) {
-    if indexPath.row == tableData.count - 1 {
+    let totalRows = tableView.numberOfRows(inSection: indexPath.section)
+    var maskedCorners: CACornerMask = []
+
+    if indexPath.row == 0 {
+      maskedCorners.formUnion([.layerMinXMinYCorner, .layerMaxXMinYCorner])
+    } else if indexPath.row == totalRows - 1 {
+      maskedCorners.formUnion([.layerMinXMaxYCorner, .layerMaxXMaxYCorner])
       cell.separatorInset = UIEdgeInsets(
         top: 0, left: 0, bottom: 0, right: .greatestFiniteMagnitude)
     }
+
+    cell.layer.maskedCorners = maskedCorners
   }
 
   func tableView(

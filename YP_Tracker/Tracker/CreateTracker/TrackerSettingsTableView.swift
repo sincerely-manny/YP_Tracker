@@ -69,16 +69,31 @@ final class TrackerSettingsTableView: UITableView, UITableViewDataSource, UITabl
     cell.detailTextLabel?.text = rows[indexPath.row].detail
     cell.detailTextLabel?.font = .systemFont(ofSize: 17, weight: .regular)
     cell.detailTextLabel?.textColor = .ypGray
+
+    cell.layer.cornerRadius = 16
+    cell.layer.masksToBounds = true
+    cell.layer.backgroundColor = UIColor.ypBackground.cgColor
+
     return cell
   }
 
   func tableView(
     _ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath
   ) {
-    if indexPath.row == rows.count - 1 {
+    let totalRows = tableView.numberOfRows(inSection: indexPath.section)
+    var maskedCorners: CACornerMask = []
+
+    if indexPath.row == 0 {
+      maskedCorners.formUnion([.layerMinXMinYCorner, .layerMaxXMinYCorner])
+    }
+    if indexPath.row == totalRows - 1 {
+      maskedCorners.formUnion([.layerMinXMaxYCorner, .layerMaxXMaxYCorner])
       cell.separatorInset = UIEdgeInsets(
         top: 0, left: 0, bottom: 0, right: .greatestFiniteMagnitude)
     }
+
+    cell.layer.maskedCorners = maskedCorners
+
   }
 
   func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
