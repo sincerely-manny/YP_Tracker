@@ -152,12 +152,12 @@ final class CreateTrackerViewController: UIViewController {
     view.backgroundColor = .ypWhite
     view.layoutMargins = UIEdgeInsets(top: 24, left: 16, bottom: 0, right: 16)
 
-    setupBottomButtons()
     setupScrollView()
     setupTextField()
     setupTrackerSettingsTableView()
     setupEmojiPicker()
     setupColorPicker()
+    setupBottomButtons()
   }
 
   private func setupScrollView() {
@@ -165,21 +165,20 @@ final class CreateTrackerViewController: UIViewController {
     scrollView.addSubview(contentView)
 
     NSLayoutConstraint.activate([
-      // ScrollView constraints
       scrollView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-      scrollView.leadingAnchor.constraint(equalTo: view.layoutMarginsGuide.leadingAnchor),
-      scrollView.trailingAnchor.constraint(equalTo: view.layoutMarginsGuide.trailingAnchor),
-      scrollView.bottomAnchor.constraint(
-        equalTo: bottomButtonsContainerView.topAnchor, constant: -16),
+      scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+      scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+      scrollView.bottomAnchor.constraint(equalTo: view.keyboardLayoutGuide.topAnchor),
 
-      // ContentView constraints - essential for scrolling to work
       contentView.topAnchor.constraint(equalTo: scrollView.contentLayoutGuide.topAnchor),
-      contentView.leadingAnchor.constraint(equalTo: scrollView.contentLayoutGuide.leadingAnchor),
-      contentView.trailingAnchor.constraint(equalTo: scrollView.contentLayoutGuide.trailingAnchor),
+      contentView.leadingAnchor.constraint(
+        equalTo: scrollView.contentLayoutGuide.leadingAnchor, constant: 16),
+      contentView.trailingAnchor.constraint(
+        equalTo: scrollView.contentLayoutGuide.trailingAnchor, constant: -16),
       contentView.bottomAnchor.constraint(equalTo: scrollView.contentLayoutGuide.bottomAnchor),
 
-      // This is crucial - width must be equal to frameLayoutGuide for proper horizontal constraint
-      contentView.widthAnchor.constraint(equalTo: scrollView.frameLayoutGuide.widthAnchor),
+      contentView.widthAnchor.constraint(
+        equalTo: scrollView.frameLayoutGuide.widthAnchor, constant: -32),
     ])
   }
 
@@ -213,43 +212,6 @@ final class CreateTrackerViewController: UIViewController {
         equalTo: textFieldContainerView.leadingAnchor),
       habitNameTextFieldErrorLabel.trailingAnchor.constraint(
         equalTo: textFieldContainerView.trailingAnchor),
-    ])
-  }
-
-  private func setupBottomButtons() {
-    view.addSubview(bottomButtonsContainerView)
-    NSLayoutConstraint.activate([
-      bottomButtonsContainerView.leadingAnchor.constraint(
-        equalTo: view.layoutMarginsGuide.leadingAnchor),
-      bottomButtonsContainerView.trailingAnchor.constraint(
-        equalTo: view.layoutMarginsGuide.trailingAnchor),
-      bottomButtonsContainerView.bottomAnchor.constraint(
-        equalTo: view.keyboardLayoutGuide.topAnchor, constant: -16),
-      bottomButtonsContainerView.heightAnchor.constraint(equalToConstant: 60),
-    ])
-
-    bottomButtonsContainerView.addSubview(cancelButton)
-    NSLayoutConstraint.activate([
-      cancelButton.leadingAnchor.constraint(
-        equalTo: bottomButtonsContainerView.leadingAnchor),
-      cancelButton.trailingAnchor.constraint(
-        equalTo: bottomButtonsContainerView.centerXAnchor, constant: -4),
-      cancelButton.topAnchor.constraint(
-        equalTo: bottomButtonsContainerView.topAnchor),
-      cancelButton.bottomAnchor.constraint(
-        equalTo: bottomButtonsContainerView.bottomAnchor),
-    ])
-
-    bottomButtonsContainerView.addSubview(createButton)
-    NSLayoutConstraint.activate([
-      createButton.leadingAnchor.constraint(
-        equalTo: bottomButtonsContainerView.centerXAnchor, constant: 4),
-      createButton.trailingAnchor.constraint(
-        equalTo: bottomButtonsContainerView.trailingAnchor),
-      createButton.topAnchor.constraint(
-        equalTo: bottomButtonsContainerView.topAnchor),
-      createButton.bottomAnchor.constraint(
-        equalTo: bottomButtonsContainerView.bottomAnchor),
     ])
   }
 
@@ -289,8 +251,49 @@ final class CreateTrackerViewController: UIViewController {
       colorPicker.trailingAnchor.constraint(
         equalTo: contentView.trailingAnchor),
       colorPicker.heightAnchor.constraint(equalToConstant: 224),
-      // This is essential - connect the last element to the bottom of the contentView
-      colorPicker.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -16),
+
+    ])
+  }
+
+  private func setupBottomButtons() {
+    contentView.addSubview(bottomButtonsContainerView)
+    NSLayoutConstraint.activate([
+      bottomButtonsContainerView.leadingAnchor.constraint(
+        equalTo: contentView.layoutMarginsGuide.leadingAnchor),
+      bottomButtonsContainerView.trailingAnchor.constraint(
+        equalTo: contentView.layoutMarginsGuide.trailingAnchor),
+      bottomButtonsContainerView.heightAnchor.constraint(equalToConstant: 60),
+      bottomButtonsContainerView.topAnchor.constraint(
+        equalTo: colorPicker.bottomAnchor, constant: 24),
+
+      bottomButtonsContainerView.bottomAnchor.constraint(
+        equalTo: contentView.bottomAnchor, constant: -16),
+
+    ])
+
+    bottomButtonsContainerView.addSubview(cancelButton)
+    NSLayoutConstraint.activate([
+      cancelButton.leadingAnchor.constraint(
+        equalTo: bottomButtonsContainerView.leadingAnchor),
+      cancelButton.trailingAnchor.constraint(
+        equalTo: bottomButtonsContainerView.centerXAnchor, constant: -4),
+      cancelButton.topAnchor.constraint(
+        equalTo: bottomButtonsContainerView.topAnchor),
+      cancelButton.bottomAnchor.constraint(
+        equalTo: bottomButtonsContainerView.bottomAnchor),
+    ])
+
+    bottomButtonsContainerView.addSubview(createButton)
+    NSLayoutConstraint.activate([
+      createButton.leadingAnchor.constraint(
+        equalTo: bottomButtonsContainerView.centerXAnchor, constant: 4),
+      createButton.trailingAnchor.constraint(
+        equalTo: bottomButtonsContainerView.trailingAnchor),
+      createButton.topAnchor.constraint(
+        equalTo: bottomButtonsContainerView.topAnchor),
+      createButton.bottomAnchor.constraint(
+        equalTo: bottomButtonsContainerView.bottomAnchor),
+
     ])
   }
 
