@@ -117,10 +117,10 @@ final class TrackerCollectionViewCell: UICollectionViewCell {
 
   func configure(with model: Tracker) {
     self.model = model
-    header.backgroundColor = model.color
+    header.backgroundColor = UIColor.init(hex: model.color)
     emojiLabel.text = model.emoji
     titleLabel.text = model.name
-    plusButton.color = model.color
+    plusButton.color = UIColor.init(hex: model.color) ?? UIColor.clear
   }
 
   @objc private func completionButtonTapped() {

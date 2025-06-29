@@ -16,13 +16,28 @@ final class CreateTrackerViewController: UIViewController {
     }
   }
   private var categoryId: UUID = sampleData[0].id
+  private var emoji: String?
+  private var color: String?
+
+  private lazy var scrollView: UIScrollView = {
+    let scrollView = UIScrollView()
+    scrollView.translatesAutoresizingMaskIntoConstraints = false
+    scrollView.showsVerticalScrollIndicator = true
+    scrollView.alwaysBounceVertical = true
+    return scrollView
+  }()
+
+  private lazy var contentView: UIView = {
+    let view = UIView()
+    view.translatesAutoresizingMaskIntoConstraints = false
+    return view
+  }()
 
   private lazy var textFieldContainerView: UIView = {
     let view = UIView()
     view.translatesAutoresizingMaskIntoConstraints = false
     view.backgroundColor = .ypBackground
     view.layer.cornerRadius = 16
-
     return view
   }()
 
@@ -98,6 +113,26 @@ final class CreateTrackerViewController: UIViewController {
     return button
   }()
 
+  private lazy var emojiPicker: EmojiPicker = {
+    let picker = EmojiPicker()
+    picker.translatesAutoresizingMaskIntoConstraints = false
+    picker.didSelectEmoji = { [weak self] selectedEmoji in
+      self?.emoji = selectedEmoji
+      self?.setCreateButtonState()
+    }
+    return picker
+  }()
+
+  private lazy var colorPicker: ColorPicker = {
+    let picker = ColorPicker()
+    picker.translatesAutoresizingMaskIntoConstraints = false
+    picker.didSelectColor = { [weak self] selectedColor in
+      self?.color = selectedColor
+      self?.setCreateButtonState()
+    }
+    return picker
+  }()
+
   init(trackerType: TrackerType = .habit) {
     self.trackerType = trackerType
     super.init(nibName: nil, bundle: nil)
@@ -117,20 +152,44 @@ final class CreateTrackerViewController: UIViewController {
     view.backgroundColor = .ypWhite
     view.layoutMargins = UIEdgeInsets(top: 24, left: 16, bottom: 0, right: 16)
 
-    setupTextField()
     setupBottomButtons()
+    setupScrollView()
+    setupTextField()
     setupTrackerSettingsTableView()
+    setupEmojiPicker()
+    setupColorPicker()
+  }
+
+  private func setupScrollView() {
+    view.addSubview(scrollView)
+    scrollView.addSubview(contentView)
+
+    NSLayoutConstraint.activate([
+      // ScrollView constraints
+      scrollView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+      scrollView.leadingAnchor.constraint(equalTo: view.layoutMarginsGuide.leadingAnchor),
+      scrollView.trailingAnchor.constraint(equalTo: view.layoutMarginsGuide.trailingAnchor),
+      scrollView.bottomAnchor.constraint(
+        equalTo: bottomButtonsContainerView.topAnchor, constant: -16),
+
+      // ContentView constraints - essential for scrolling to work
+      contentView.topAnchor.constraint(equalTo: scrollView.contentLayoutGuide.topAnchor),
+      contentView.leadingAnchor.constraint(equalTo: scrollView.contentLayoutGuide.leadingAnchor),
+      contentView.trailingAnchor.constraint(equalTo: scrollView.contentLayoutGuide.trailingAnchor),
+      contentView.bottomAnchor.constraint(equalTo: scrollView.contentLayoutGuide.bottomAnchor),
+
+      // This is crucial - width must be equal to frameLayoutGuide for proper horizontal constraint
+      contentView.widthAnchor.constraint(equalTo: scrollView.frameLayoutGuide.widthAnchor),
+    ])
   }
 
   private func setupTextField() {
-    view.addSubview(textFieldContainerView)
+    contentView.addSubview(textFieldContainerView)
 
     NSLayoutConstraint.activate([
-      textFieldContainerView.topAnchor.constraint(equalTo: view.layoutMarginsGuide.topAnchor),
-      textFieldContainerView.leadingAnchor.constraint(
-        equalTo: view.layoutMarginsGuide.leadingAnchor),
-      textFieldContainerView.trailingAnchor.constraint(
-        equalTo: view.layoutMarginsGuide.trailingAnchor),
+      textFieldContainerView.topAnchor.constraint(equalTo: contentView.topAnchor),
+      textFieldContainerView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
+      textFieldContainerView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
       textFieldContainerView.heightAnchor.constraint(equalToConstant: 75),
     ])
 
@@ -161,9 +220,9 @@ final class CreateTrackerViewController: UIViewController {
     view.addSubview(bottomButtonsContainerView)
     NSLayoutConstraint.activate([
       bottomButtonsContainerView.leadingAnchor.constraint(
-        equalTo: view.layoutMarginsGuide.leadingAnchor, constant: 4),
+        equalTo: view.layoutMarginsGuide.leadingAnchor),
       bottomButtonsContainerView.trailingAnchor.constraint(
-        equalTo: view.layoutMarginsGuide.trailingAnchor, constant: -4),
+        equalTo: view.layoutMarginsGuide.trailingAnchor),
       bottomButtonsContainerView.bottomAnchor.constraint(
         equalTo: view.keyboardLayoutGuide.topAnchor, constant: -16),
       bottomButtonsContainerView.heightAnchor.constraint(equalToConstant: 60),
@@ -195,16 +254,43 @@ final class CreateTrackerViewController: UIViewController {
   }
 
   private func setupTrackerSettingsTableView() {
-    view.addSubview(trackerSettingsTableView)
+    contentView.addSubview(trackerSettingsTableView)
     NSLayoutConstraint.activate([
       trackerSettingsTableView.topAnchor.constraint(
         equalTo: textFieldContainerView.bottomAnchor, constant: 24),
       trackerSettingsTableView.leadingAnchor.constraint(
-        equalTo: view.layoutMarginsGuide.leadingAnchor),
+        equalTo: contentView.leadingAnchor),
       trackerSettingsTableView.trailingAnchor.constraint(
-        equalTo: view.layoutMarginsGuide.trailingAnchor),
-      trackerSettingsTableView.bottomAnchor.constraint(
-        equalTo: bottomButtonsContainerView.topAnchor, constant: -24),
+        equalTo: contentView.trailingAnchor),
+      trackerSettingsTableView.heightAnchor.constraint(equalToConstant: 150),
+    ])
+  }
+
+  private func setupEmojiPicker() {
+    contentView.addSubview(emojiPicker)
+    NSLayoutConstraint.activate([
+      emojiPicker.topAnchor.constraint(
+        equalTo: trackerSettingsTableView.bottomAnchor, constant: 16),
+      emojiPicker.leadingAnchor.constraint(
+        equalTo: contentView.leadingAnchor),
+      emojiPicker.trailingAnchor.constraint(
+        equalTo: contentView.trailingAnchor),
+      emojiPicker.heightAnchor.constraint(equalToConstant: 224),
+    ])
+  }
+
+  private func setupColorPicker() {
+    contentView.addSubview(colorPicker)
+    NSLayoutConstraint.activate([
+      colorPicker.topAnchor.constraint(
+        equalTo: emojiPicker.bottomAnchor, constant: 16),
+      colorPicker.leadingAnchor.constraint(
+        equalTo: contentView.leadingAnchor),
+      colorPicker.trailingAnchor.constraint(
+        equalTo: contentView.trailingAnchor),
+      colorPicker.heightAnchor.constraint(equalToConstant: 224),
+      // This is essential - connect the last element to the bottom of the contentView
+      colorPicker.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -16),
     ])
   }
 
@@ -217,11 +303,8 @@ final class CreateTrackerViewController: UIViewController {
     let tracker = Tracker(
       id: UUID(),
       name: habitName,
-      color: [
-        .systemRed, .systemGreen, .systemBlue, .systemOrange, .systemPurple, .systemYellow,
-        .systemPink, .systemTeal, .systemIndigo,
-      ].randomElement() ?? .systemGray,
-      emoji: ["🏃", "🍎", "💧", "🧘", "📚", "🎨"].randomElement() ?? "✅",
+      color: color ?? "#FF6C6C",
+      emoji: emoji ?? "",
       schedule: schedule.isEmpty ? nil : schedule
     )
     assert(delegate != nil, "Delegate must be set before creating a tracker")
@@ -238,7 +321,6 @@ final class CreateTrackerViewController: UIViewController {
 
     createButton.backgroundColor = createButton.isEnabled ? UIColor.ypBlack : UIColor.ypGray
   }
-
 }
 
 extension CreateTrackerViewController: UITextFieldValidatedErrorDelegate {
@@ -263,7 +345,6 @@ extension CreateTrackerViewController: UITextFieldValidatedErrorDelegate {
   ) {
     setCreateButtonState()
   }
-
 }
 
 extension CreateTrackerViewController: ScheduleSelectionViewControllerDelegate {

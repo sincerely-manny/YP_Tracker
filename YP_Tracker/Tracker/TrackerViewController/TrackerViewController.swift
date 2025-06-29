@@ -156,11 +156,11 @@ let sampleData: [TrackerCategory] = [
     id: UUID(), name: "Здоровье",
     trackers: [
       Tracker(
-        id: UUID(), name: "Сон", color: .systemBlue, emoji: "😴", schedule: [DayOfWeek.mon]),
+        id: UUID(), name: "Сон", color: "#FF0000", emoji: "😴", schedule: [DayOfWeek.mon]),
       Tracker(
-        id: UUID(), name: "Питание", color: .systemGreen, emoji: "🥗", schedule: [DayOfWeek.mon]),
+        id: UUID(), name: "Питание", color: "#FF0000", emoji: "🥗", schedule: [DayOfWeek.mon]),
       Tracker(
-        id: UUID(), name: "Физическая активность", color: .systemOrange, emoji: "🏋️",
+        id: UUID(), name: "Физическая активность", color: "#FF0000", emoji: "🏋️",
         schedule: [
           DayOfWeek.mon, DayOfWeek.wed, DayOfWeek.fri,
         ]),
@@ -169,12 +169,12 @@ let sampleData: [TrackerCategory] = [
     id: UUID(), name: "Продуктивность",
     trackers: [
       Tracker(
-        id: UUID(), name: "Работа", color: .systemPurple, emoji: "💼",
+        id: UUID(), name: "Работа", color: "#FF0000", emoji: "💼",
         schedule: [
           DayOfWeek.mon, DayOfWeek.tue, DayOfWeek.wed, DayOfWeek.thu, DayOfWeek.fri,
         ]),
       Tracker(
-        id: UUID(), name: "Учеба", color: .systemYellow, emoji: "📚",
+        id: UUID(), name: "Учеба", color: "#FF0000", emoji: "📚",
         schedule: [
           DayOfWeek.mon, DayOfWeek.tue, DayOfWeek.wed, DayOfWeek.thu, DayOfWeek.fri,
         ]),
@@ -183,12 +183,12 @@ let sampleData: [TrackerCategory] = [
     id: UUID(), name: "Хобби",
     trackers: [
       Tracker(
-        id: UUID(), name: "Чтение", color: .systemPink, emoji: "📖",
+        id: UUID(), name: "Чтение", color: "#FF0000", emoji: "📖",
         schedule: [
           DayOfWeek.mon, DayOfWeek.tue, DayOfWeek.wed, DayOfWeek.thu, DayOfWeek.fri,
         ]),
       Tracker(
-        id: UUID(), name: "Рисование", color: .systemTeal, emoji: "🎨",
+        id: UUID(), name: "Рисование", color: "#FF0000", emoji: "🎨",
         schedule: [
           DayOfWeek.mon, DayOfWeek.tue, DayOfWeek.wed, DayOfWeek.thu, DayOfWeek.fri,
         ]),
