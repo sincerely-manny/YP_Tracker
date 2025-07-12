@@ -15,7 +15,7 @@ final class CreateTrackerViewController: UIViewController {
       }
     }
   }
-  private var categoryId: UUID = sampleData[0].id
+  private var categoryId: Identifier?
   private var emoji: String?
   private var color: String?
 
@@ -68,7 +68,7 @@ final class CreateTrackerViewController: UIViewController {
 
   private lazy var trackerSettingsTableView: TrackerSettingsTableView = {
     let tableView = TrackerSettingsTableView(type: trackerType == .habit ? .full : .onlyCategory)
-    tableView.category = sampleData[0].name
+    tableView.category = ""
     tableView.translatesAutoresizingMaskIntoConstraints = false
     tableView.didTapSchedule = { [weak self] in
       guard let self else { return }
@@ -303,15 +303,18 @@ final class CreateTrackerViewController: UIViewController {
 
   @objc private func createButtonTapped() {
     guard let habitName = habitNameTextField.text, !habitName.isEmpty else { return }
-    let tracker = Tracker(
-      id: UUID(),
+    let tracker = TrackerCreateDTO(
       name: habitName,
       color: color ?? "#FF6C6C",
       emoji: emoji ?? "",
       schedule: schedule.isEmpty ? nil : schedule
     )
-    assert(delegate != nil, "Delegate must be set before creating a tracker")
-    delegate?.trackerCreated(tracker: tracker, categoryId: categoryId)
+    guard let categoryId, let delegate else {
+      assertionFailure(
+        "Category ID must be set before creating a tracker and delegate must not be nil")
+      return
+    }
+    delegate.trackerCreated(tracker: tracker, categoryId: categoryId)
     dismiss(animated: true)
   }
 

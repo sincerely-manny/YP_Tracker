@@ -1,7 +1,12 @@
 import Foundation
 
 struct TrackerRecord {
-  let id: UUID = UUID()
-  let trackerId: UUID
+  let id: Identifier
+  let trackerId: Identifier
+  let date: Date
+}
+
+struct TrackerRecordCreateDTO {
+  let trackerId: Identifier
   let date: Date
 }

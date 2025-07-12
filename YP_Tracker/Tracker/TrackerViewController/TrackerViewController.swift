@@ -4,8 +4,9 @@ final class TrackerViewController: UIViewController {
   private var collectionView: UICollectionView?
   var completedTrackers: [TrackerRecord] = []
   var selectedDate: Date = Date()
+  let dataProvider = DataProvider.shared
 
-  var categories: [TrackerCategory] = sampleData {
+  var categories: [TrackerCategory] = DataProvider.shared.fetchCategories() {
     didSet { setFilteredTrackers() }
   }
   var filteredTrackers: [TrackerCategory] = [] {
@@ -133,15 +134,15 @@ final class TrackerViewController: UIViewController {
 }
 
 extension TrackerViewController: CreateTrackerDelegate {
-  func trackerCreated(tracker: Tracker, categoryId: UUID) {
+  func trackerCreated(tracker: TrackerCreateDTO, categoryId: Identifier) {
     let categoryIndex = categories.firstIndex(where: { $0.id == categoryId })
     assert(categoryIndex != nil, "Category with id \(categoryId) not found.")
     if let categoryIndex {
       let category = categories[categoryIndex]
-      let newCategory = TrackerCategory(
-        id: category.id, name: category.name,
-        trackers: category.trackers + [tracker])
-      categories[categoryIndex] = newCategory
+      // let newCategory = TrackerCategory(
+      //   id: category.id, name: category.name,
+      //   trackers: category.trackers + [tracker])
+      // categories[categoryIndex] = newCategory
       let section = IndexSet(integer: categoryIndex)
       collectionView?.performBatchUpdates(
         {
@@ -150,47 +151,3 @@ extension TrackerViewController: CreateTrackerDelegate {
     }
   }
 }
-
-let sampleData: [TrackerCategory] = [
-  TrackerCategory(
-    id: UUID(), name: "Здоровье",
-    trackers: [
-      Tracker(
-        id: UUID(), name: "Сон", color: "#FF0000", emoji: "😴", schedule: [DayOfWeek.mon]),
-      Tracker(
-        id: UUID(), name: "Питание", color: "#FF0000", emoji: "🥗", schedule: [DayOfWeek.mon]),
-      Tracker(
-        id: UUID(), name: "Физическая активность", color: "#FF0000", emoji: "🏋️",
-        schedule: [
-          DayOfWeek.mon, DayOfWeek.wed, DayOfWeek.fri,
-        ]),
-    ]),
-  TrackerCategory(
-    id: UUID(), name: "Продуктивность",
-    trackers: [
-      Tracker(
-        id: UUID(), name: "Работа", color: "#FF0000", emoji: "💼",
-        schedule: [
-          DayOfWeek.mon, DayOfWeek.tue, DayOfWeek.wed, DayOfWeek.thu, DayOfWeek.fri,
-        ]),
-      Tracker(
-        id: UUID(), name: "Учеба", color: "#FF0000", emoji: "📚",
-        schedule: [
-          DayOfWeek.mon, DayOfWeek.tue, DayOfWeek.wed, DayOfWeek.thu, DayOfWeek.fri,
-        ]),
-    ]),
-  TrackerCategory(
-    id: UUID(), name: "Хобби",
-    trackers: [
-      Tracker(
-        id: UUID(), name: "Чтение", color: "#FF0000", emoji: "📖",
-        schedule: [
-          DayOfWeek.mon, DayOfWeek.tue, DayOfWeek.wed, DayOfWeek.thu, DayOfWeek.fri,
-        ]),
-      Tracker(
-        id: UUID(), name: "Рисование", color: "#FF0000", emoji: "🎨",
-        schedule: [
-          DayOfWeek.mon, DayOfWeek.tue, DayOfWeek.wed, DayOfWeek.thu, DayOfWeek.fri,
-        ]),
-    ]),
-]

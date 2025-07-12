@@ -12,7 +12,7 @@ private let daysOfWeek: [(index: Int, titleShort: String, titleFull: String)] = 
   return days
 }()
 
-enum DayOfWeek: Int, CaseIterable, Hashable {
+enum DayOfWeek: Int, CaseIterable, Hashable, Codable {
   case mon = 2
   case tue = 3
   case wed = 4
@@ -29,3 +29,33 @@ enum DayOfWeek: Int, CaseIterable, Hashable {
     daysOfWeek[self.rawValue - 1].titleFull
   }
 }
+
+extension Array where Element == DayOfWeek {
+  func toJSON() -> String {
+    do {
+      let jsonData = try JSONEncoder().encode(self)
+      if let jsonString = String(data: jsonData, encoding: .utf8) {
+        return jsonString
+      }
+    } catch {
+      assertionFailure("Failed to encode DayOfWeek array: \(error)")
+    }
+    return "[]"
+  }
+
+  static func fromJSON(_ json: String?) -> [DayOfWeek]? {
+    guard let json else { return nil }
+
+    guard let jsonData = json.data(using: .utf8) else {
+      return nil
+    }
+    do {
+      return try JSONDecoder().decode([DayOfWeek].self, from: jsonData)
+    } catch {
+      assertionFailure("Failed to decode DayOfWeek array: \(error)")
+      return nil
+    }
+  }
+}
+
+typealias TrackerSchedule = [DayOfWeek]
