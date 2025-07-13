@@ -135,19 +135,26 @@ final class TrackerViewController: UIViewController {
 
 extension TrackerViewController: CreateTrackerDelegate {
   func trackerCreated(tracker: TrackerCreateDTO, categoryId: Identifier) {
-    let categoryIndex = categories.firstIndex(where: { $0.id == categoryId })
-    assert(categoryIndex != nil, "Category with id \(categoryId) not found.")
-    if let categoryIndex {
-      let category = categories[categoryIndex]
-      // let newCategory = TrackerCategory(
-      //   id: category.id, name: category.name,
-      //   trackers: category.trackers + [tracker])
-      // categories[categoryIndex] = newCategory
-      let section = IndexSet(integer: categoryIndex)
-      collectionView?.performBatchUpdates(
-        {
-          collectionView?.reloadSections(section)
-        }, completion: nil)
+    // let categoryIndex = categories.firstIndex(where: { $0.id == categoryId })
+    // assert(categoryIndex != nil, "Category with id \(categoryId) not found.")
+    // if let categoryIndex {
+    //   let category = categories[categoryIndex]
+    //   // let newCategory = TrackerCategory(
+    //   //   id: category.id, name: category.name,
+    //   //   trackers: category.trackers + [tracker])
+    //   // categories[categoryIndex] = newCategory
+    //   let section = IndexSet(integer: categoryIndex)
+    //   collectionView?.performBatchUpdates(
+    //     {
+    //       collectionView?.reloadSections(section)
+    //     }, completion: nil)
+    // }
+    do {
+      try dataProvider.createTracker(tracker: tracker, categoryId: categoryId)
+      categories = dataProvider.fetchCategories()
+    } catch {
+      assertionFailure("Failed to create tracker: \(error)")
     }
+
   }
 }

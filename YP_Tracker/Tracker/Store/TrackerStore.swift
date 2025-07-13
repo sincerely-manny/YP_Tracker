@@ -41,7 +41,9 @@ final class TrackerStore: NSObject {
   }
 
   @discardableResult
-  func createTracker(with tracker: Tracker, categoryId: Identifier) throws -> TrackerCoreData {
+  func createTracker(with tracker: TrackerCreateDTO, categoryId: Identifier) throws
+    -> TrackerCoreData
+  {
     let trackerCoreData = TrackerCoreData(context: context)
     trackerCoreData.name = tracker.name
     trackerCoreData.color = tracker.color

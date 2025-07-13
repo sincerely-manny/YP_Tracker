@@ -1,8 +1,11 @@
 import UIKit
 
-final class TrackerEmptyListPlaceholder: UIView {
-  init() {
+final class EmptyListPlaceholder: UIView {
+  var text = ""
+
+  init(text: String) {
     super.init(frame: .zero)
+    self.text = text
     setup()
   }
 
@@ -33,10 +36,11 @@ final class TrackerEmptyListPlaceholder: UIView {
     ])
 
     let label = UILabel()
-    label.text = "Что будем отслеживать?"
+    label.text = text
     label.textColor = UIColor.ypBlack
     label.font = UIFont.systemFont(ofSize: 12, weight: .medium)
     label.textAlignment = .center
+    label.numberOfLines = 2
     container.addSubview(label)
     label.translatesAutoresizingMaskIntoConstraints = false
     NSLayoutConstraint.activate([

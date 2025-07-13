@@ -18,7 +18,7 @@ final class DataProvider: NSObject {
 
   // MARK: - Tracker Methods
 
-  func createTracker(tracker: Tracker, categoryId: Identifier) throws {
+  func createTracker(tracker: TrackerCreateDTO, categoryId: Identifier) throws {
     _ = try trackerStore.createTracker(with: tracker, categoryId: categoryId)
   }
 
@@ -28,8 +28,13 @@ final class DataProvider: NSObject {
 
   // MARK: - Category Methods
 
-  func createCategory(name: String) throws {
-    _ = try trackerCategoryStore.createCategory(with: name)
+  func createCategory(name: String) throws -> TrackerCategory {
+    let result = try trackerCategoryStore.createCategory(with: name)
+    return TrackerCategory(
+      id: result.objectID,
+      name: result.name ?? "",
+      trackers: []
+    )
   }
 
   func fetchCategories() -> [TrackerCategory] {

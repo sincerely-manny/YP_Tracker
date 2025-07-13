@@ -15,7 +15,7 @@ final class CreateTrackerViewController: UIViewController {
       }
     }
   }
-  private var categoryId: Identifier?
+  private var category: TrackerCategory?
   private var emoji: String?
   private var color: String?
 
@@ -77,6 +77,18 @@ final class CreateTrackerViewController: UIViewController {
       self.navigationController?.pushViewController(
         vc, animated: true)
     }
+    tableView.didTapCategory = { [weak self] in
+      guard let self else { return }
+      let vc = CategorySelectionViewController(selectedCategory: category)
+      vc.didSelectCategory = { [weak self] category in
+        guard let self else { return }
+        self.category = category
+        self.trackerSettingsTableView.category = category.name
+        self.setCreateButtonState()
+      }
+      self.navigationController?.pushViewController(vc, animated: true)
+    }
+
     return tableView
   }()
 
@@ -309,20 +321,25 @@ final class CreateTrackerViewController: UIViewController {
       emoji: emoji ?? "",
       schedule: schedule.isEmpty ? nil : schedule
     )
-    guard let categoryId, let delegate else {
+    guard let category, let delegate else {
       assertionFailure(
-        "Category ID must be set before creating a tracker and delegate must not be nil")
+        "Category must be set before creating a tracker and delegate must not be nil")
       return
     }
-    delegate.trackerCreated(tracker: tracker, categoryId: categoryId)
+    delegate.trackerCreated(tracker: tracker, categoryId: category.id)
     dismiss(animated: true)
   }
 
   private func setCreateButtonState() {
-    if trackerType == .irregularEvent {
-      createButton.isEnabled = !(habitNameTextField.text?.isEmpty ?? true)
-    } else {
-      createButton.isEnabled = !(habitNameTextField.text?.isEmpty ?? true) && schedule.count > 0
+    guard let nameField = habitNameTextField.text else { return }
+
+    switch (trackerType, nameField.isEmpty, schedule.isEmpty, category == nil) {
+    case (.habit, false, false, false):
+      createButton.isEnabled = true
+    case (.irregularEvent, false, _, false):
+      createButton.isEnabled = true
+    default:
+      createButton.isEnabled = false
     }
 
     createButton.backgroundColor = createButton.isEnabled ? UIColor.ypBlack : UIColor.ypGray
