@@ -1,7 +1,7 @@
 import UIKit
 
 final class CategoryCreationViewController: UIViewController, UITextFieldDelegate {
-  private let dataProvider = DataProvider.shared
+  private let categoryStore = DataProvider.shared.trackerCategoryStore
   private var categoryNameTextField: UITextField?
 
   var didCreateCategory: ((TrackerCategory) -> Void)?
@@ -72,7 +72,7 @@ final class CategoryCreationViewController: UIViewController, UITextFieldDelegat
     guard let name = categoryNameTextField?.text, !name.isEmpty else { return }
 
     do {
-      let category = try dataProvider.createCategory(name: name)
+      let category = try categoryStore.createCategory(with: name)
       didCreateCategory?(category)
 
       navigationController?.popViewController(animated: true)

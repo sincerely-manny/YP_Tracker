@@ -7,6 +7,7 @@ struct Tracker {
   let color: String
   let emoji: String
   let schedule: TrackerSchedule?
+  let records: [TrackerRecord]
 }
 
 struct TrackerCreateDTO {

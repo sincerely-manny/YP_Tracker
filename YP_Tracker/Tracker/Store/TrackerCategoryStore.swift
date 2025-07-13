@@ -39,11 +39,12 @@ final class TrackerCategoryStore: NSObject {
     super.init()
   }
 
-  func createCategory(with name: String) throws -> TrackerCategoryCoreData {
+  @discardableResult
+  func createCategory(with name: String) throws -> TrackerCategory {
     let categoryCoreData = TrackerCategoryCoreData(context: context)
     categoryCoreData.name = name
     try context.save()
-    return categoryCoreData
+    return TrackerCategory(id: categoryCoreData.objectID, name: name, trackers: [])
   }
 
   func fetchCategories() -> [TrackerCategory] {

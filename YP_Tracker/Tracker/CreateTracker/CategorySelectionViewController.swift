@@ -4,7 +4,7 @@ final class CategorySelectionViewController: UIViewController, UITableViewDelega
   UITableViewDataSource
 {
   private var tableView: UITableView?
-  var categories: [TrackerCategory] = DataProvider.shared.fetchCategories() {
+  var categories: [TrackerCategory] = DataProvider.shared.trackerCategoryStore.fetchCategories() {
     didSet {
       if !categories.isEmpty {
         tableView?.backgroundView?.isHidden = true
@@ -15,7 +15,6 @@ final class CategorySelectionViewController: UIViewController, UITableViewDelega
     }
   }
   var selectedCategory: TrackerCategory?
-  private let dataProvider = DataProvider.shared
 
   var didSelectCategory: ((TrackerCategory) -> Void)?
 

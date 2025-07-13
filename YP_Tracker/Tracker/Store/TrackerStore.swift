@@ -71,13 +71,29 @@ final class TrackerStore: NSObject {
     return trackersCoreData.map { TrackerStore.fromCoreData($0) }
   }
 
+  func fetchTracker(for trackerId: Identifier) -> Tracker? {
+    guard let trackerCoreData = context.object(with: trackerId) as? TrackerCoreData else {
+      assertionFailure("Tracker with ID \(trackerId) not found")
+      return nil
+    }
+    return TrackerStore.fromCoreData(trackerCoreData)
+  }
+
   static func fromCoreData(_ trackerCoreData: TrackerCoreData) -> Tracker {
     return Tracker(
       id: trackerCoreData.objectID,
       name: trackerCoreData.name ?? "",
       color: trackerCoreData.color ?? "",
       emoji: trackerCoreData.emoji ?? "",
-      schedule: TrackerSchedule.fromJSON(trackerCoreData.schedule)
+      schedule: TrackerSchedule.fromJSON(trackerCoreData.schedule),
+      records: trackerCoreData.records?.compactMap { data in
+        guard let record = data as? TrackerRecordCoreData else { return nil }
+        return TrackerRecord(
+          id: record.objectID,
+          trackerId: record.tracker?.objectID ?? NSManagedObjectID(),
+          date: record.date ?? Date(),
+        )
+      } ?? []
     )
   }
 

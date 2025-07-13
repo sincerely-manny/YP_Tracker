@@ -5,9 +5,7 @@ protocol TrackerRecordStoreDelegate: AnyObject {
 }
 
 struct TrackerRecordStoreUpdate {
-  let insertedIndexPaths: [IndexPath]
-  let deletedIndexPaths: [IndexPath]
-  let updatedIndexPaths: [IndexPath]
+  let trackerId: Identifier
 }
 
 final class TrackerRecordStore: NSObject {
@@ -28,17 +26,16 @@ final class TrackerRecordStore: NSObject {
   }()
 
   weak var delegate: TrackerRecordStoreDelegate?
-  private var insertedIndexPaths: [IndexPath] = []
-  private var deletedIndexPaths: [IndexPath] = []
-  private var updatedIndexPaths: [IndexPath] = []
+  private var updatedTrackerId: Identifier?
 
   init(context: NSManagedObjectContext) {
     self.context = context
     super.init()
   }
 
-  @discardableResult
-  func addRecord(trackerId: Identifier, date: Date) throws -> TrackerRecordCoreData {
+  @discardableResult func addRecord(trackerId: Identifier, date: Date) throws
+    -> TrackerRecordCoreData
+  {
     guard let tracker = context.object(with: trackerId) as? TrackerCoreData else {
       assertionFailure("Tracker with ID \(trackerId) not found")
       throw NSError(
@@ -206,12 +203,6 @@ final class TrackerRecordStore: NSObject {
 
 // MARK: - NSFetchedResultsControllerDelegate
 extension TrackerRecordStore: NSFetchedResultsControllerDelegate {
-  func controllerWillChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
-    insertedIndexPaths = []
-    deletedIndexPaths = []
-    updatedIndexPaths = []
-  }
-
   func controller(
     _ controller: NSFetchedResultsController<NSFetchRequestResult>,
     didChange anObject: Any,
@@ -219,34 +210,20 @@ extension TrackerRecordStore: NSFetchedResultsControllerDelegate {
     for type: NSFetchedResultsChangeType,
     newIndexPath: IndexPath?
   ) {
-    switch type {
-    case .insert:
-      if let indexPath = newIndexPath {
-        insertedIndexPaths.append(indexPath)
-      }
-    case .delete:
-      if let indexPath = indexPath {
-        deletedIndexPaths.append(indexPath)
-      }
-    case .update:
-      if let indexPath = indexPath {
-        updatedIndexPaths.append(indexPath)
-      }
-    case .move:
-      break
-    @unknown default:
-      break
-    }
+    guard let record = anObject as? TrackerRecordCoreData,
+      let tracker = record.tracker
+    else { return }
+
+    updatedTrackerId = tracker.objectID
   }
 
   func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
+    guard let updatedTrackerId else { return }
+
     delegate?.store(
       self,
-      didUpdate: TrackerRecordStoreUpdate(
-        insertedIndexPaths: insertedIndexPaths,
-        deletedIndexPaths: deletedIndexPaths,
-        updatedIndexPaths: updatedIndexPaths
-      )
+      didUpdate: TrackerRecordStoreUpdate(trackerId: updatedTrackerId)
     )
+    self.updatedTrackerId = nil
   }
 }

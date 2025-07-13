@@ -1,17 +1,21 @@
 import UIKit
 
 final class TrackerViewController: UIViewController {
-  private var collectionView: UICollectionView?
-  var completedTrackers: [TrackerRecord] = []
-  var selectedDate: Date = Date()
-  let dataProvider = DataProvider.shared
+  var collectionView: UICollectionView?
 
-  var categories: [TrackerCategory] = DataProvider.shared.fetchCategories() {
+  var selectedDate: Date = Date()
+  let trackerStore: TrackerStore = DataProvider.shared.trackerStore
+  let recordStore: TrackerRecordStore = DataProvider.shared.trackerRecordStore
+  let trackerCategoryStore: TrackerCategoryStore = DataProvider.shared.trackerCategoryStore
+
+  var categories: [TrackerCategory] = [] {
     didSet { setFilteredTrackers() }
   }
   var filteredTrackers: [TrackerCategory] = [] {
     didSet { collectionView?.reloadData() }
   }
+
+  var trackerRecords: [TrackerRecord] = []
 
   private let dateFormatter: DateFormatter = {
     let formatter = DateFormatter()
@@ -55,6 +59,11 @@ final class TrackerViewController: UIViewController {
 
   override func viewDidLoad() {
     super.viewDidLoad()
+    trackerStore.delegate = self
+    recordStore.delegate = self
+    trackerCategoryStore.delegate = self
+    categories = trackerCategoryStore.fetchCategories()
+    trackerRecords = recordStore.allRecords()
     setFilteredTrackers()
     setupView()
   }
@@ -135,23 +144,8 @@ final class TrackerViewController: UIViewController {
 
 extension TrackerViewController: CreateTrackerDelegate {
   func trackerCreated(tracker: TrackerCreateDTO, categoryId: Identifier) {
-    // let categoryIndex = categories.firstIndex(where: { $0.id == categoryId })
-    // assert(categoryIndex != nil, "Category with id \(categoryId) not found.")
-    // if let categoryIndex {
-    //   let category = categories[categoryIndex]
-    //   // let newCategory = TrackerCategory(
-    //   //   id: category.id, name: category.name,
-    //   //   trackers: category.trackers + [tracker])
-    //   // categories[categoryIndex] = newCategory
-    //   let section = IndexSet(integer: categoryIndex)
-    //   collectionView?.performBatchUpdates(
-    //     {
-    //       collectionView?.reloadSections(section)
-    //     }, completion: nil)
-    // }
     do {
-      try dataProvider.createTracker(tracker: tracker, categoryId: categoryId)
-      categories = dataProvider.fetchCategories()
+      try trackerStore.createTracker(with: tracker, categoryId: categoryId)
     } catch {
       assertionFailure("Failed to create tracker: \(error)")
     }
