@@ -20,7 +20,7 @@ final class CreateTrackerSelectTypeViewController: UIViewController {
     NSLayoutConstraint.activate([
       buttonsContainerView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
       buttonsContainerView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
-      buttonsContainerView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
+      buttonsContainerView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20)
     ])
 
     setupButtons()
@@ -46,7 +46,7 @@ final class CreateTrackerSelectTypeViewController: UIViewController {
       NSLayoutConstraint.activate([
         button.leadingAnchor.constraint(equalTo: buttonsContainerView.leadingAnchor),
         button.trailingAnchor.constraint(equalTo: buttonsContainerView.trailingAnchor),
-        button.heightAnchor.constraint(equalToConstant: buttonHeight),
+        button.heightAnchor.constraint(equalToConstant: buttonHeight)
       ])
 
       if let previousButton = previousButton {

@@ -7,7 +7,7 @@ final class ColorPicker: UICollectionView, UICollectionViewDelegate, UICollectio
   private let colors: [String] = [
     "#FD4C49", "#FF881E", "#007BFA", "#6E44FE", "#33CF69", "#E66DD4", "#F9D4D4", "#34A7FE",
     "#46E69D", "#35347C", "#FF674D", "#FF99CC", "#F6C48B", "#7994F5", "#832CF1", "#AD56DA",
-    "#8D72E6", "#2FD058",
+    "#8D72E6", "#2FD058"
   ]
 
   var didSelectColor: ((String) -> Void)?
@@ -59,7 +59,7 @@ final class ColorPicker: UICollectionView, UICollectionViewDelegate, UICollectio
       notSelectedView.centerXAnchor.constraint(equalTo: backgroundView.centerXAnchor),
       notSelectedView.centerYAnchor.constraint(equalTo: backgroundView.centerYAnchor),
       notSelectedView.widthAnchor.constraint(equalToConstant: 40),
-      notSelectedView.heightAnchor.constraint(equalToConstant: 40),
+      notSelectedView.heightAnchor.constraint(equalToConstant: 40)
     ])
 
     let selectedBackgroundView = UIView()
@@ -87,7 +87,7 @@ final class ColorPicker: UICollectionView, UICollectionViewDelegate, UICollectio
       outer.centerXAnchor.constraint(equalTo: selectedBackgroundView.centerXAnchor),
       outer.centerYAnchor.constraint(equalTo: selectedBackgroundView.centerYAnchor),
       outer.widthAnchor.constraint(equalToConstant: 48),
-      outer.heightAnchor.constraint(equalToConstant: 48),
+      outer.heightAnchor.constraint(equalToConstant: 48)
     ])
 
     outer.translatesAutoresizingMaskIntoConstraints = false
@@ -116,7 +116,7 @@ final class ColorPicker: UICollectionView, UICollectionViewDelegate, UICollectio
         label.topAnchor.constraint(equalTo: header.topAnchor),
         label.leadingAnchor.constraint(equalTo: header.leadingAnchor, constant: 12),
         label.trailingAnchor.constraint(equalTo: header.trailingAnchor),
-        label.bottomAnchor.constraint(equalTo: header.bottomAnchor),
+        label.bottomAnchor.constraint(equalTo: header.bottomAnchor)
       ])
 
       return header

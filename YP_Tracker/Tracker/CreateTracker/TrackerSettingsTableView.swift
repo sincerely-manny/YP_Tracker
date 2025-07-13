@@ -22,7 +22,7 @@ final class TrackerSettingsTableView: UITableView, UITableViewDataSource, UITabl
 
   private var rows: [(title: String, detail: String)] = [
     ("Категория", ""),
-    ("Расписание", ""),
+    ("Расписание", "")
   ]
 
   init(type: SettingsType = .full) {

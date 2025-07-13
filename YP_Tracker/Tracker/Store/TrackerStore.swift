@@ -91,7 +91,7 @@ final class TrackerStore: NSObject {
         return TrackerRecord(
           id: record.objectID,
           trackerId: record.tracker?.objectID ?? NSManagedObjectID(),
-          date: record.date ?? Date(),
+          date: record.date ?? Date()
         )
       } ?? []
     )

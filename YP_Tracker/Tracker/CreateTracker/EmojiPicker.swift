@@ -5,7 +5,7 @@ final class EmojiPicker: UICollectionView, UICollectionViewDelegate, UICollectio
 {
 
   private let emojis: [String] = [
-    "🙂", "😻", "🌺", "🐶", "❤️", "😱", "😇", "😡", "🥶", "🤔", "🙌", "🍔", "🥦", "🏓", "🥇", "🎸", "🏝", "😪",
+    "🙂", "😻", "🌺", "🐶", "❤️", "😱", "😇", "😡", "🥶", "🤔", "🙌", "🍔", "🥦", "🏓", "🥇", "🎸", "🏝", "😪"
   ]
 
   var didSelectEmoji: ((String) -> Void)?
@@ -81,7 +81,7 @@ final class EmojiPicker: UICollectionView, UICollectionViewDelegate, UICollectio
         label.topAnchor.constraint(equalTo: header.topAnchor),
         label.leadingAnchor.constraint(equalTo: header.leadingAnchor, constant: 12),
         label.trailingAnchor.constraint(equalTo: header.trailingAnchor),
-        label.bottomAnchor.constraint(equalTo: header.bottomAnchor),
+        label.bottomAnchor.constraint(equalTo: header.bottomAnchor)
       ])
 
       return header

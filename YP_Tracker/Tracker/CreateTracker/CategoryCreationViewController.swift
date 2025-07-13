@@ -54,7 +54,7 @@ final class CategoryCreationViewController: UIViewController, UITextFieldDelegat
       textField.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 24),
       textField.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
       textField.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
-      textField.heightAnchor.constraint(equalToConstant: 75),
+      textField.heightAnchor.constraint(equalToConstant: 75)
     ])
 
     view.addSubview(createButton)
@@ -64,7 +64,7 @@ final class CategoryCreationViewController: UIViewController, UITextFieldDelegat
       createButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
       createButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
       createButton.bottomAnchor.constraint(
-        equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -16),
+        equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -16)
     ])
   }
 

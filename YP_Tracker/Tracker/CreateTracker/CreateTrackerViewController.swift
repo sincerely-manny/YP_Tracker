@@ -190,7 +190,7 @@ final class CreateTrackerViewController: UIViewController {
       contentView.bottomAnchor.constraint(equalTo: scrollView.contentLayoutGuide.bottomAnchor),
 
       contentView.widthAnchor.constraint(
-        equalTo: scrollView.frameLayoutGuide.widthAnchor, constant: -32),
+        equalTo: scrollView.frameLayoutGuide.widthAnchor, constant: -32)
     ])
   }
 
@@ -201,7 +201,7 @@ final class CreateTrackerViewController: UIViewController {
       textFieldContainerView.topAnchor.constraint(equalTo: contentView.topAnchor),
       textFieldContainerView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
       textFieldContainerView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
-      textFieldContainerView.heightAnchor.constraint(equalToConstant: 75),
+      textFieldContainerView.heightAnchor.constraint(equalToConstant: 75)
     ])
 
     textFieldContainerView.addSubview(habitNameTextField)
@@ -212,7 +212,7 @@ final class CreateTrackerViewController: UIViewController {
         equalTo: textFieldContainerView.leadingAnchor, constant: 16),
       habitNameTextField.trailingAnchor.constraint(
         equalTo: textFieldContainerView.trailingAnchor, constant: -16),
-      habitNameTextField.heightAnchor.constraint(equalToConstant: 44),
+      habitNameTextField.heightAnchor.constraint(equalToConstant: 44)
     ])
 
     textFieldContainerView.addSubview(habitNameTextFieldErrorLabel)
@@ -223,7 +223,7 @@ final class CreateTrackerViewController: UIViewController {
       habitNameTextFieldErrorLabel.leadingAnchor.constraint(
         equalTo: textFieldContainerView.leadingAnchor),
       habitNameTextFieldErrorLabel.trailingAnchor.constraint(
-        equalTo: textFieldContainerView.trailingAnchor),
+        equalTo: textFieldContainerView.trailingAnchor)
     ])
   }
 
@@ -236,7 +236,7 @@ final class CreateTrackerViewController: UIViewController {
         equalTo: contentView.leadingAnchor),
       trackerSettingsTableView.trailingAnchor.constraint(
         equalTo: contentView.trailingAnchor),
-      trackerSettingsTableView.heightAnchor.constraint(equalToConstant: 150),
+      trackerSettingsTableView.heightAnchor.constraint(equalToConstant: 150)
     ])
   }
 
@@ -249,7 +249,7 @@ final class CreateTrackerViewController: UIViewController {
         equalTo: contentView.leadingAnchor),
       emojiPicker.trailingAnchor.constraint(
         equalTo: contentView.trailingAnchor),
-      emojiPicker.heightAnchor.constraint(equalToConstant: 224),
+      emojiPicker.heightAnchor.constraint(equalToConstant: 224)
     ])
   }
 
@@ -262,7 +262,7 @@ final class CreateTrackerViewController: UIViewController {
         equalTo: contentView.leadingAnchor),
       colorPicker.trailingAnchor.constraint(
         equalTo: contentView.trailingAnchor),
-      colorPicker.heightAnchor.constraint(equalToConstant: 224),
+      colorPicker.heightAnchor.constraint(equalToConstant: 224)
 
     ])
   }
@@ -279,7 +279,7 @@ final class CreateTrackerViewController: UIViewController {
         equalTo: colorPicker.bottomAnchor, constant: 24),
 
       bottomButtonsContainerView.bottomAnchor.constraint(
-        equalTo: contentView.bottomAnchor, constant: -16),
+        equalTo: contentView.bottomAnchor, constant: -16)
 
     ])
 
@@ -292,7 +292,7 @@ final class CreateTrackerViewController: UIViewController {
       cancelButton.topAnchor.constraint(
         equalTo: bottomButtonsContainerView.topAnchor),
       cancelButton.bottomAnchor.constraint(
-        equalTo: bottomButtonsContainerView.bottomAnchor),
+        equalTo: bottomButtonsContainerView.bottomAnchor)
     ])
 
     bottomButtonsContainerView.addSubview(createButton)
@@ -304,7 +304,7 @@ final class CreateTrackerViewController: UIViewController {
       createButton.topAnchor.constraint(
         equalTo: bottomButtonsContainerView.topAnchor),
       createButton.bottomAnchor.constraint(
-        equalTo: bottomButtonsContainerView.bottomAnchor),
+        equalTo: bottomButtonsContainerView.bottomAnchor)
 
     ])
   }

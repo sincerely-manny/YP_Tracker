@@ -81,7 +81,7 @@ final class TrackerViewController: UIViewController {
       searchBar.leadingAnchor.constraint(
         equalTo: view.layoutMarginsGuide.leadingAnchor, constant: -8),
       searchBar.trailingAnchor.constraint(
-        equalTo: view.layoutMarginsGuide.trailingAnchor, constant: 8),
+        equalTo: view.layoutMarginsGuide.trailingAnchor, constant: 8)
     ])
 
     collectionView = TrackerCollectionView(dataSource: self)
@@ -101,7 +101,7 @@ final class TrackerViewController: UIViewController {
       collectionView.trailingAnchor.constraint(
         equalTo: view.trailingAnchor),
       collectionView.bottomAnchor.constraint(
-        equalTo: view.safeAreaLayoutGuide.bottomAnchor),
+        equalTo: view.safeAreaLayoutGuide.bottomAnchor)
     ])
 
   }

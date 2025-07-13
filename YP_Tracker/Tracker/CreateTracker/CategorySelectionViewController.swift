@@ -57,7 +57,7 @@ final class CategorySelectionViewController: UIViewController, UITableViewDelega
       addCategoryButton.leadingAnchor.constraint(
         equalTo: view.leadingAnchor, constant: 20),
       addCategoryButton.trailingAnchor.constraint(
-        equalTo: view.trailingAnchor, constant: -20),
+        equalTo: view.trailingAnchor, constant: -20)
     ])
 
     setupTableView()
@@ -67,7 +67,7 @@ final class CategorySelectionViewController: UIViewController, UITableViewDelega
       tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
       tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
       tableView.bottomAnchor.constraint(
-        equalTo: addCategoryButton.topAnchor, constant: -16),
+        equalTo: addCategoryButton.topAnchor, constant: -16)
     ])
   }
 
