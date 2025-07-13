@@ -79,7 +79,7 @@ final class EmojiPicker: UICollectionView, UICollectionViewDelegate, UICollectio
 
       NSLayoutConstraint.activate([
         label.topAnchor.constraint(equalTo: header.topAnchor),
-        label.leadingAnchor.constraint(equalTo: header.leadingAnchor, constant: 12),
+        label.leadingAnchor.constraint(equalTo: header.leadingAnchor, constant: 6),
         label.trailingAnchor.constraint(equalTo: header.trailingAnchor),
         label.bottomAnchor.constraint(equalTo: header.bottomAnchor)
       ])

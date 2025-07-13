@@ -198,7 +198,7 @@ final class CreateTrackerViewController: UIViewController {
     contentView.addSubview(textFieldContainerView)
 
     NSLayoutConstraint.activate([
-      textFieldContainerView.topAnchor.constraint(equalTo: contentView.topAnchor),
+      textFieldContainerView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 24),
       textFieldContainerView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
       textFieldContainerView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
       textFieldContainerView.heightAnchor.constraint(equalToConstant: 75)
