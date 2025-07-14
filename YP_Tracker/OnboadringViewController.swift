@@ -110,11 +110,20 @@ final class OnboardingViewController: UIPageViewController, UIPageViewController
     PersistentState.shared.isOnboardingCompleted = true
     let indexViewController = IndexTabbarController()
     indexViewController.modalPresentationStyle = .fullScreen
-    if let window = UIApplication.shared.windows.first {
+
+    if let windowScene = UIApplication.shared.connectedScenes
+      .first(where: { $0.activationState == .foregroundActive }) as? UIWindowScene,
+      let window = windowScene.windows.first
+    {
+
       window.rootViewController = indexViewController
       UIView.transition(
-        with: window, duration: 0.5, options: .transitionCrossDissolve, animations: nil,
-        completion: nil)
+        with: window,
+        duration: 0.5,
+        options: .transitionCrossDissolve,
+        animations: nil,
+        completion: nil
+      )
     }
   }
 
