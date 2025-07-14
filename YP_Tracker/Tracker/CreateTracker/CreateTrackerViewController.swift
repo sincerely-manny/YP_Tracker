@@ -15,14 +15,29 @@ final class CreateTrackerViewController: UIViewController {
       }
     }
   }
-  private var categoryId: UUID = sampleData[0].id
+  private var category: TrackerCategory?
+  private var emoji: String?
+  private var color: String?
+
+  private lazy var scrollView: UIScrollView = {
+    let scrollView = UIScrollView()
+    scrollView.translatesAutoresizingMaskIntoConstraints = false
+    scrollView.showsVerticalScrollIndicator = true
+    scrollView.alwaysBounceVertical = true
+    return scrollView
+  }()
+
+  private lazy var contentView: UIView = {
+    let view = UIView()
+    view.translatesAutoresizingMaskIntoConstraints = false
+    return view
+  }()
 
   private lazy var textFieldContainerView: UIView = {
     let view = UIView()
     view.translatesAutoresizingMaskIntoConstraints = false
     view.backgroundColor = .ypBackground
     view.layer.cornerRadius = 16
-
     return view
   }()
 
@@ -53,7 +68,7 @@ final class CreateTrackerViewController: UIViewController {
 
   private lazy var trackerSettingsTableView: TrackerSettingsTableView = {
     let tableView = TrackerSettingsTableView(type: trackerType == .habit ? .full : .onlyCategory)
-    tableView.category = sampleData[0].name
+    tableView.category = ""
     tableView.translatesAutoresizingMaskIntoConstraints = false
     tableView.didTapSchedule = { [weak self] in
       guard let self else { return }
@@ -62,6 +77,18 @@ final class CreateTrackerViewController: UIViewController {
       self.navigationController?.pushViewController(
         vc, animated: true)
     }
+    tableView.didTapCategory = { [weak self] in
+      guard let self else { return }
+      let vc = CategorySelectionViewController(selectedCategory: category)
+      vc.didSelectCategory = { [weak self] category in
+        guard let self else { return }
+        self.category = category
+        self.trackerSettingsTableView.category = category.name
+        self.setCreateButtonState()
+      }
+      self.navigationController?.pushViewController(vc, animated: true)
+    }
+
     return tableView
   }()
 
@@ -98,6 +125,26 @@ final class CreateTrackerViewController: UIViewController {
     return button
   }()
 
+  private lazy var emojiPicker: EmojiPicker = {
+    let picker = EmojiPicker()
+    picker.translatesAutoresizingMaskIntoConstraints = false
+    picker.didSelectEmoji = { [weak self] selectedEmoji in
+      self?.emoji = selectedEmoji
+      self?.setCreateButtonState()
+    }
+    return picker
+  }()
+
+  private lazy var colorPicker: ColorPicker = {
+    let picker = ColorPicker()
+    picker.translatesAutoresizingMaskIntoConstraints = false
+    picker.didSelectColor = { [weak self] selectedColor in
+      self?.color = selectedColor
+      self?.setCreateButtonState()
+    }
+    return picker
+  }()
+
   init(trackerType: TrackerType = .habit) {
     self.trackerType = trackerType
     super.init(nibName: nil, bundle: nil)
@@ -117,21 +164,44 @@ final class CreateTrackerViewController: UIViewController {
     view.backgroundColor = .ypWhite
     view.layoutMargins = UIEdgeInsets(top: 24, left: 16, bottom: 0, right: 16)
 
+    setupScrollView()
     setupTextField()
-    setupBottomButtons()
     setupTrackerSettingsTableView()
+    setupEmojiPicker()
+    setupColorPicker()
+    setupBottomButtons()
+  }
+
+  private func setupScrollView() {
+    view.addSubview(scrollView)
+    scrollView.addSubview(contentView)
+
+    NSLayoutConstraint.activate([
+      scrollView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+      scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+      scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+      scrollView.bottomAnchor.constraint(equalTo: view.keyboardLayoutGuide.topAnchor),
+
+      contentView.topAnchor.constraint(equalTo: scrollView.contentLayoutGuide.topAnchor),
+      contentView.leadingAnchor.constraint(
+        equalTo: scrollView.contentLayoutGuide.leadingAnchor, constant: 16),
+      contentView.trailingAnchor.constraint(
+        equalTo: scrollView.contentLayoutGuide.trailingAnchor, constant: -16),
+      contentView.bottomAnchor.constraint(equalTo: scrollView.contentLayoutGuide.bottomAnchor),
+
+      contentView.widthAnchor.constraint(
+        equalTo: scrollView.frameLayoutGuide.widthAnchor, constant: -32)
+    ])
   }
 
   private func setupTextField() {
-    view.addSubview(textFieldContainerView)
+    contentView.addSubview(textFieldContainerView)
 
     NSLayoutConstraint.activate([
-      textFieldContainerView.topAnchor.constraint(equalTo: view.layoutMarginsGuide.topAnchor),
-      textFieldContainerView.leadingAnchor.constraint(
-        equalTo: view.layoutMarginsGuide.leadingAnchor),
-      textFieldContainerView.trailingAnchor.constraint(
-        equalTo: view.layoutMarginsGuide.trailingAnchor),
-      textFieldContainerView.heightAnchor.constraint(equalToConstant: 75),
+      textFieldContainerView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 24),
+      textFieldContainerView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
+      textFieldContainerView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
+      textFieldContainerView.heightAnchor.constraint(equalToConstant: 75)
     ])
 
     textFieldContainerView.addSubview(habitNameTextField)
@@ -142,7 +212,7 @@ final class CreateTrackerViewController: UIViewController {
         equalTo: textFieldContainerView.leadingAnchor, constant: 16),
       habitNameTextField.trailingAnchor.constraint(
         equalTo: textFieldContainerView.trailingAnchor, constant: -16),
-      habitNameTextField.heightAnchor.constraint(equalToConstant: 44),
+      habitNameTextField.heightAnchor.constraint(equalToConstant: 44)
     ])
 
     textFieldContainerView.addSubview(habitNameTextFieldErrorLabel)
@@ -153,20 +223,64 @@ final class CreateTrackerViewController: UIViewController {
       habitNameTextFieldErrorLabel.leadingAnchor.constraint(
         equalTo: textFieldContainerView.leadingAnchor),
       habitNameTextFieldErrorLabel.trailingAnchor.constraint(
-        equalTo: textFieldContainerView.trailingAnchor),
+        equalTo: textFieldContainerView.trailingAnchor)
+    ])
+  }
+
+  private func setupTrackerSettingsTableView() {
+    contentView.addSubview(trackerSettingsTableView)
+    NSLayoutConstraint.activate([
+      trackerSettingsTableView.topAnchor.constraint(
+        equalTo: textFieldContainerView.bottomAnchor, constant: 24),
+      trackerSettingsTableView.leadingAnchor.constraint(
+        equalTo: contentView.leadingAnchor),
+      trackerSettingsTableView.trailingAnchor.constraint(
+        equalTo: contentView.trailingAnchor),
+      trackerSettingsTableView.heightAnchor.constraint(equalToConstant: 150)
+    ])
+  }
+
+  private func setupEmojiPicker() {
+    contentView.addSubview(emojiPicker)
+    NSLayoutConstraint.activate([
+      emojiPicker.topAnchor.constraint(
+        equalTo: trackerSettingsTableView.bottomAnchor, constant: 16),
+      emojiPicker.leadingAnchor.constraint(
+        equalTo: contentView.leadingAnchor),
+      emojiPicker.trailingAnchor.constraint(
+        equalTo: contentView.trailingAnchor),
+      emojiPicker.heightAnchor.constraint(equalToConstant: 224)
+    ])
+  }
+
+  private func setupColorPicker() {
+    contentView.addSubview(colorPicker)
+    NSLayoutConstraint.activate([
+      colorPicker.topAnchor.constraint(
+        equalTo: emojiPicker.bottomAnchor, constant: 16),
+      colorPicker.leadingAnchor.constraint(
+        equalTo: contentView.leadingAnchor),
+      colorPicker.trailingAnchor.constraint(
+        equalTo: contentView.trailingAnchor),
+      colorPicker.heightAnchor.constraint(equalToConstant: 224)
+
     ])
   }
 
   private func setupBottomButtons() {
-    view.addSubview(bottomButtonsContainerView)
+    contentView.addSubview(bottomButtonsContainerView)
     NSLayoutConstraint.activate([
       bottomButtonsContainerView.leadingAnchor.constraint(
-        equalTo: view.layoutMarginsGuide.leadingAnchor, constant: 4),
+        equalTo: contentView.layoutMarginsGuide.leadingAnchor),
       bottomButtonsContainerView.trailingAnchor.constraint(
-        equalTo: view.layoutMarginsGuide.trailingAnchor, constant: -4),
-      bottomButtonsContainerView.bottomAnchor.constraint(
-        equalTo: view.keyboardLayoutGuide.topAnchor, constant: -16),
+        equalTo: contentView.layoutMarginsGuide.trailingAnchor),
       bottomButtonsContainerView.heightAnchor.constraint(equalToConstant: 60),
+      bottomButtonsContainerView.topAnchor.constraint(
+        equalTo: colorPicker.bottomAnchor, constant: 24),
+
+      bottomButtonsContainerView.bottomAnchor.constraint(
+        equalTo: contentView.bottomAnchor, constant: -16)
+
     ])
 
     bottomButtonsContainerView.addSubview(cancelButton)
@@ -178,7 +292,7 @@ final class CreateTrackerViewController: UIViewController {
       cancelButton.topAnchor.constraint(
         equalTo: bottomButtonsContainerView.topAnchor),
       cancelButton.bottomAnchor.constraint(
-        equalTo: bottomButtonsContainerView.bottomAnchor),
+        equalTo: bottomButtonsContainerView.bottomAnchor)
     ])
 
     bottomButtonsContainerView.addSubview(createButton)
@@ -190,21 +304,8 @@ final class CreateTrackerViewController: UIViewController {
       createButton.topAnchor.constraint(
         equalTo: bottomButtonsContainerView.topAnchor),
       createButton.bottomAnchor.constraint(
-        equalTo: bottomButtonsContainerView.bottomAnchor),
-    ])
-  }
+        equalTo: bottomButtonsContainerView.bottomAnchor)
 
-  private func setupTrackerSettingsTableView() {
-    view.addSubview(trackerSettingsTableView)
-    NSLayoutConstraint.activate([
-      trackerSettingsTableView.topAnchor.constraint(
-        equalTo: textFieldContainerView.bottomAnchor, constant: 24),
-      trackerSettingsTableView.leadingAnchor.constraint(
-        equalTo: view.layoutMarginsGuide.leadingAnchor),
-      trackerSettingsTableView.trailingAnchor.constraint(
-        equalTo: view.layoutMarginsGuide.trailingAnchor),
-      trackerSettingsTableView.bottomAnchor.constraint(
-        equalTo: bottomButtonsContainerView.topAnchor, constant: -24),
     ])
   }
 
@@ -214,31 +315,35 @@ final class CreateTrackerViewController: UIViewController {
 
   @objc private func createButtonTapped() {
     guard let habitName = habitNameTextField.text, !habitName.isEmpty else { return }
-    let tracker = Tracker(
-      id: UUID(),
+    let tracker = TrackerCreateDTO(
       name: habitName,
-      color: [
-        .systemRed, .systemGreen, .systemBlue, .systemOrange, .systemPurple, .systemYellow,
-        .systemPink, .systemTeal, .systemIndigo,
-      ].randomElement() ?? .systemGray,
-      emoji: ["🏃", "🍎", "💧", "🧘", "📚", "🎨"].randomElement() ?? "✅",
+      color: color ?? "#FF6C6C",
+      emoji: emoji ?? "",
       schedule: schedule.isEmpty ? nil : schedule
     )
-    assert(delegate != nil, "Delegate must be set before creating a tracker")
-    delegate?.trackerCreated(tracker: tracker, categoryId: categoryId)
+    guard let category, let delegate else {
+      assertionFailure(
+        "Category must be set before creating a tracker and delegate must not be nil")
+      return
+    }
+    delegate.trackerCreated(tracker: tracker, categoryId: category.id)
     dismiss(animated: true)
   }
 
   private func setCreateButtonState() {
-    if trackerType == .irregularEvent {
-      createButton.isEnabled = !(habitNameTextField.text?.isEmpty ?? true)
-    } else {
-      createButton.isEnabled = !(habitNameTextField.text?.isEmpty ?? true) && schedule.count > 0
+    guard let nameField = habitNameTextField.text else { return }
+
+    switch (trackerType, nameField.isEmpty, schedule.isEmpty, category == nil) {
+    case (.habit, false, false, false):
+      createButton.isEnabled = true
+    case (.irregularEvent, false, _, false):
+      createButton.isEnabled = true
+    default:
+      createButton.isEnabled = false
     }
 
     createButton.backgroundColor = createButton.isEnabled ? UIColor.ypBlack : UIColor.ypGray
   }
-
 }
 
 extension CreateTrackerViewController: UITextFieldValidatedErrorDelegate {
@@ -263,7 +368,6 @@ extension CreateTrackerViewController: UITextFieldValidatedErrorDelegate {
   ) {
     setCreateButtonState()
   }
-
 }
 
 extension CreateTrackerViewController: ScheduleSelectionViewControllerDelegate {

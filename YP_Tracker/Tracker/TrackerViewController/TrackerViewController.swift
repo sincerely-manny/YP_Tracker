@@ -1,16 +1,21 @@
 import UIKit
 
 final class TrackerViewController: UIViewController {
-  private var collectionView: UICollectionView?
-  var completedTrackers: [TrackerRecord] = []
-  var selectedDate: Date = Date()
+  var collectionView: UICollectionView?
 
-  var categories: [TrackerCategory] = sampleData {
+  var selectedDate: Date = Date()
+  let trackerStore: TrackerStore = DataProvider.shared.trackerStore
+  let recordStore: TrackerRecordStore = DataProvider.shared.trackerRecordStore
+  let trackerCategoryStore: TrackerCategoryStore = DataProvider.shared.trackerCategoryStore
+
+  var categories: [TrackerCategory] = [] {
     didSet { setFilteredTrackers() }
   }
   var filteredTrackers: [TrackerCategory] = [] {
     didSet { collectionView?.reloadData() }
   }
+
+  var trackerRecords: [TrackerRecord] = []
 
   private let dateFormatter: DateFormatter = {
     let formatter = DateFormatter()
@@ -54,6 +59,11 @@ final class TrackerViewController: UIViewController {
 
   override func viewDidLoad() {
     super.viewDidLoad()
+    trackerStore.delegate = self
+    recordStore.delegate = self
+    trackerCategoryStore.delegate = self
+    categories = trackerCategoryStore.fetchCategories()
+    trackerRecords = recordStore.allRecords()
     setFilteredTrackers()
     setupView()
   }
@@ -71,7 +81,7 @@ final class TrackerViewController: UIViewController {
       searchBar.leadingAnchor.constraint(
         equalTo: view.layoutMarginsGuide.leadingAnchor, constant: -8),
       searchBar.trailingAnchor.constraint(
-        equalTo: view.layoutMarginsGuide.trailingAnchor, constant: 8),
+        equalTo: view.layoutMarginsGuide.trailingAnchor, constant: 8)
     ])
 
     collectionView = TrackerCollectionView(dataSource: self)
@@ -91,7 +101,7 @@ final class TrackerViewController: UIViewController {
       collectionView.trailingAnchor.constraint(
         equalTo: view.trailingAnchor),
       collectionView.bottomAnchor.constraint(
-        equalTo: view.safeAreaLayoutGuide.bottomAnchor),
+        equalTo: view.safeAreaLayoutGuide.bottomAnchor)
     ])
 
   }
@@ -133,64 +143,12 @@ final class TrackerViewController: UIViewController {
 }
 
 extension TrackerViewController: CreateTrackerDelegate {
-  func trackerCreated(tracker: Tracker, categoryId: UUID) {
-    let categoryIndex = categories.firstIndex(where: { $0.id == categoryId })
-    assert(categoryIndex != nil, "Category with id \(categoryId) not found.")
-    if let categoryIndex {
-      let category = categories[categoryIndex]
-      let newCategory = TrackerCategory(
-        id: category.id, name: category.name,
-        trackers: category.trackers + [tracker])
-      categories[categoryIndex] = newCategory
-      let section = IndexSet(integer: categoryIndex)
-      collectionView?.performBatchUpdates(
-        {
-          collectionView?.reloadSections(section)
-        }, completion: nil)
+  func trackerCreated(tracker: TrackerCreateDTO, categoryId: Identifier) {
+    do {
+      try trackerStore.createTracker(with: tracker, categoryId: categoryId)
+    } catch {
+      assertionFailure("Failed to create tracker: \(error)")
     }
+
   }
 }
-
-let sampleData: [TrackerCategory] = [
-  TrackerCategory(
-    id: UUID(), name: "Здоровье",
-    trackers: [
-      Tracker(
-        id: UUID(), name: "Сон", color: .systemBlue, emoji: "😴", schedule: [DayOfWeek.mon]),
-      Tracker(
-        id: UUID(), name: "Питание", color: .systemGreen, emoji: "🥗", schedule: [DayOfWeek.mon]),
-      Tracker(
-        id: UUID(), name: "Физическая активность", color: .systemOrange, emoji: "🏋️",
-        schedule: [
-          DayOfWeek.mon, DayOfWeek.wed, DayOfWeek.fri,
-        ]),
-    ]),
-  TrackerCategory(
-    id: UUID(), name: "Продуктивность",
-    trackers: [
-      Tracker(
-        id: UUID(), name: "Работа", color: .systemPurple, emoji: "💼",
-        schedule: [
-          DayOfWeek.mon, DayOfWeek.tue, DayOfWeek.wed, DayOfWeek.thu, DayOfWeek.fri,
-        ]),
-      Tracker(
-        id: UUID(), name: "Учеба", color: .systemYellow, emoji: "📚",
-        schedule: [
-          DayOfWeek.mon, DayOfWeek.tue, DayOfWeek.wed, DayOfWeek.thu, DayOfWeek.fri,
-        ]),
-    ]),
-  TrackerCategory(
-    id: UUID(), name: "Хобби",
-    trackers: [
-      Tracker(
-        id: UUID(), name: "Чтение", color: .systemPink, emoji: "📖",
-        schedule: [
-          DayOfWeek.mon, DayOfWeek.tue, DayOfWeek.wed, DayOfWeek.thu, DayOfWeek.fri,
-        ]),
-      Tracker(
-        id: UUID(), name: "Рисование", color: .systemTeal, emoji: "🎨",
-        schedule: [
-          DayOfWeek.mon, DayOfWeek.tue, DayOfWeek.wed, DayOfWeek.thu, DayOfWeek.fri,
-        ]),
-    ]),
-]

@@ -30,8 +30,10 @@ extension TrackerViewController: UICollectionViewDataSource {
 
     let tracker = filteredTrackers[indexPath.section].trackers[indexPath.item]
     cell.delegate = self
-    cell.isCompleted = trackerCompletedForDate(id: tracker.id, date: selectedDate)
-    cell.trackerCompletedTimes = trackerCompletedTimes(id: tracker.id)
+    let records = trackerRecords.filter { $0.trackerId == tracker.id }
+    cell.isCompleted =
+      records.contains { Calendar.current.isDate($0.date, inSameDayAs: selectedDate) }
+    cell.trackerCompletedTimes = records.count
     cell.configure(with: tracker)
 
     return cell

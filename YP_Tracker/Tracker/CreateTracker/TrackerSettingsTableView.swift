@@ -8,7 +8,7 @@ final class TrackerSettingsTableView: UITableView, UITableViewDataSource, UITabl
 
   var category: String = "" {
     didSet {
-      // updateRow(at: IndexPath(row: 0, section: 0), detail: category)
+      updateRow(at: IndexPath(row: 0, section: 0), detail: category)
     }
   }
   var schedule: [String] = [] {
@@ -22,7 +22,7 @@ final class TrackerSettingsTableView: UITableView, UITableViewDataSource, UITabl
 
   private var rows: [(title: String, detail: String)] = [
     ("Категория", ""),
-    ("Расписание", ""),
+    ("Расписание", "")
   ]
 
   init(type: SettingsType = .full) {

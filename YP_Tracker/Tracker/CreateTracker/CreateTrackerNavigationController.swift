@@ -11,7 +11,7 @@ final class CreateTrackerNavigationController: UINavigationController,
     view.backgroundColor = .ypWhite
     navigationBar.titleTextAttributes = [
       .foregroundColor: UIColor.ypBlack,
-      .font: UIFont.systemFont(ofSize: 16, weight: .medium),
+      .font: UIFont.systemFont(ofSize: 16, weight: .medium)
     ]
   }
 

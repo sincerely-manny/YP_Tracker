@@ -5,9 +5,9 @@ enum TrackerType: Int, CaseIterable, Hashable {
   var title: String {
     switch self {
     case .habit:
-      return "Привычка"
+      return "Новая привычка"
     case .irregularEvent:
-      return "Нерегулярное событие"
+      return "Новое нерегулярное событие"
     }
   }
 }
