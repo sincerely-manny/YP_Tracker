@@ -11,6 +11,9 @@ final class TrackerViewController: UIViewController {
   var categories: [TrackerCategory] = [] {
     didSet { setFilteredTrackers() }
   }
+  var searchQuery: String = "" {
+    didSet { setFilteredTrackers() }
+  }
   var filteredTrackers: [TrackerCategory] = [] {
     didSet { collectionView?.reloadData() }
   }
@@ -48,13 +51,11 @@ final class TrackerViewController: UIViewController {
     UIBarButtonItem(customView: datePicker)
   }()
 
-  private lazy var searchBar: UISearchBar = {
-    let searchBar = UISearchBar()
+  private lazy var searchBar: UISearchTextField = {
+    let searchBar = UISearchTextField()
     searchBar.placeholder = NSLocalizedString(
       "search", comment: "Placeholder text for search bar")
-    searchBar.searchTextField.layer.cornerRadius = 8
-    searchBar.searchTextField.layer.masksToBounds = true
-    searchBar.backgroundImage = UIImage()
+    searchBar.addTarget(self, action: #selector(searchBarTextDidChange(_:)), for: .editingChanged)
     return searchBar
   }()
 
@@ -81,9 +82,10 @@ final class TrackerViewController: UIViewController {
     NSLayoutConstraint.activate([
       searchBar.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
       searchBar.leadingAnchor.constraint(
-        equalTo: view.layoutMarginsGuide.leadingAnchor, constant: -8),
+        equalTo: view.layoutMarginsGuide.leadingAnchor),
       searchBar.trailingAnchor.constraint(
-        equalTo: view.layoutMarginsGuide.trailingAnchor, constant: 8)
+        equalTo: view.layoutMarginsGuide.trailingAnchor),
+      searchBar.heightAnchor.constraint(equalToConstant: 36)
     ])
 
     collectionView = TrackerCollectionView(dataSource: self)
@@ -96,6 +98,7 @@ final class TrackerViewController: UIViewController {
     collectionView.translatesAutoresizingMaskIntoConstraints = false
     collectionView.layoutMargins = UIEdgeInsets(
       top: 0, left: 16, bottom: 0, right: 16)
+    collectionView.contentInset.top = 34
     NSLayoutConstraint.activate([
       collectionView.topAnchor.constraint(equalTo: searchBar.bottomAnchor),
       collectionView.leadingAnchor.constraint(
@@ -123,15 +126,25 @@ final class TrackerViewController: UIViewController {
     present(controller, animated: true, completion: nil)
   }
 
+  @objc func searchBarTextDidChange(_ sender: UISearchTextField) {
+    searchQuery = sender.text ?? ""
+  }
+
   private func setFilteredTrackers() {
     var filtered: [TrackerCategory] = []
     let selectedDayOfWeek = Calendar.current.component(.weekday, from: selectedDate)
     for category in categories {
       let filteredTrackers = category.trackers.filter { tracker in
-        if let schedule = tracker.schedule {
+        switch (
+          tracker.schedule,
+          searchQuery.isEmpty || tracker.name.localizedCaseInsensitiveContains(searchQuery)
+        ) {
+        case (let schedule?, true):
           return schedule.contains { $0.rawValue == selectedDayOfWeek }
-        } else {
+        case (nil, true):
           return true
+        case (_, false):
+          return false
         }
       }
       if !filteredTrackers.isEmpty {
