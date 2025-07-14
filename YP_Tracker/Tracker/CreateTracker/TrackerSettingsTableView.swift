@@ -21,13 +21,13 @@ final class TrackerSettingsTableView: UITableView, UITableViewDataSource, UITabl
   var didTapSchedule: (() -> Void)?
 
   private var rows: [(title: String, detail: String)] = [
-    ("Категория", ""),
-    ("Расписание", "")
+    (NSLocalizedString("category", comment: "Category section title"), ""),
+    (NSLocalizedString("schedule", comment: "Schedule section title"), "")
   ]
 
   init(type: SettingsType = .full) {
     if type == .onlyCategory {
-      rows = [("Категория", "")]
+      rows = [(NSLocalizedString("category", comment: "Category section title"), "")]
     }
 
     super.init(frame: .zero, style: .plain)

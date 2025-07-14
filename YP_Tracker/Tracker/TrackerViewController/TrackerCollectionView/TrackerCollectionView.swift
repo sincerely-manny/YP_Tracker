@@ -48,7 +48,9 @@ final class TrackerCollectionView: UICollectionView {
   }
 
   private func setup() {
-    let emptyPlaceholder = EmptyListPlaceholder(text: "Что будем отслеживать?")
+    let emptyPlaceholder = EmptyListPlaceholder(
+      text: NSLocalizedString(
+        "empty_trackers_placeholder", comment: "Placeholder text for empty trackers list"))
     backgroundColor = .clear
     backgroundView = emptyPlaceholder
     guard let backgroundView else { return }

@@ -15,7 +15,9 @@ final class CategorySelectionViewController: UIViewController, UITableViewDelega
 
   private lazy var addCategoryButton: UIButton = {
     let button = UIButton(type: .system)
-    button.setTitle("Добавить категорию", for: .normal)
+    let title = NSLocalizedString(
+      "add_category_button", comment: "Button title for adding a new category")
+    button.setTitle(title, for: .normal)
     button.addTarget(self, action: #selector(addCategoryTapped), for: .touchUpInside)
     button.backgroundColor = .ypBlack
     button.setTitleColor(.ypWhite, for: .normal)
@@ -54,7 +56,8 @@ final class CategorySelectionViewController: UIViewController, UITableViewDelega
   }
 
   private func setupView() {
-    title = "Категория"
+    title = NSLocalizedString(
+      "category", comment: "Title for selecting a category")
     view.backgroundColor = .ypWhite
 
     view.addSubview(addCategoryButton)
@@ -67,7 +70,7 @@ final class CategorySelectionViewController: UIViewController, UITableViewDelega
       addCategoryButton.leadingAnchor.constraint(
         equalTo: view.leadingAnchor, constant: 20),
       addCategoryButton.trailingAnchor.constraint(
-        equalTo: view.trailingAnchor, constant: -20),
+        equalTo: view.trailingAnchor, constant: -20)
     ])
 
     setupTableView()
@@ -77,7 +80,7 @@ final class CategorySelectionViewController: UIViewController, UITableViewDelega
       tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
       tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
       tableView.bottomAnchor.constraint(
-        equalTo: addCategoryButton.topAnchor, constant: -16),
+        equalTo: addCategoryButton.topAnchor, constant: -16)
     ])
   }
 
@@ -88,8 +91,9 @@ final class CategorySelectionViewController: UIViewController, UITableViewDelega
     tableView.delegate = self
     tableView.dataSource = self
 
-    let emptyPlaceholder = EmptyListPlaceholder(
-      text: "Привычки и события можно\nобъединить по смыслу")
+    let placeholderText = NSLocalizedString(
+      "empty_category_placeholder", comment: "Placeholder text when no categories are available")
+    let emptyPlaceholder = EmptyListPlaceholder(text: placeholderText)
     tableView.backgroundColor = .clear
     tableView.backgroundView = emptyPlaceholder
     tableView.backgroundView?.frame = tableView.bounds

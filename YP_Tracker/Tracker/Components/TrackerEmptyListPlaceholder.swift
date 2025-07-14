@@ -21,7 +21,7 @@ final class EmptyListPlaceholder: UIView {
       container.centerYAnchor.constraint(equalTo: centerYAnchor),
       container.centerXAnchor.constraint(equalTo: centerXAnchor),
       container.leadingAnchor.constraint(equalTo: leadingAnchor),
-      container.trailingAnchor.constraint(equalTo: trailingAnchor),
+      container.trailingAnchor.constraint(equalTo: trailingAnchor)
     ])
 
     let imageView = UIImageView(image: UIImage(resource: .emptyList))
@@ -32,7 +32,7 @@ final class EmptyListPlaceholder: UIView {
       imageView.centerXAnchor.constraint(equalTo: container.centerXAnchor),
       imageView.topAnchor.constraint(equalTo: container.topAnchor),
       imageView.heightAnchor.constraint(equalToConstant: 80),
-      imageView.widthAnchor.constraint(equalToConstant: 80),
+      imageView.widthAnchor.constraint(equalToConstant: 80)
     ])
 
     let label = UILabel()
@@ -47,7 +47,7 @@ final class EmptyListPlaceholder: UIView {
       label.topAnchor.constraint(equalTo: imageView.bottomAnchor, constant: 8),
       label.leadingAnchor.constraint(equalTo: container.leadingAnchor),
       label.trailingAnchor.constraint(equalTo: container.trailingAnchor),
-      label.bottomAnchor.constraint(equalTo: container.bottomAnchor),
+      label.bottomAnchor.constraint(equalTo: container.bottomAnchor)
     ])
   }
 }

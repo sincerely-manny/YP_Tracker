@@ -8,7 +8,8 @@ final class CategoryCreationViewController: UIViewController, UITextFieldDelegat
 
   private lazy var createButton: UIButton = {
     let button = UIButton(type: .system)
-    button.setTitle("Готово", for: .normal)
+    button.setTitle(
+      NSLocalizedString("done", comment: "Button title for creating a new category"), for: .normal)
     button.addTarget(self, action: #selector(createCategoryTapped), for: .touchUpInside)
     button.backgroundColor = .ypGray
     button.setTitleColor(.ypWhite, for: .normal)
@@ -27,11 +28,12 @@ final class CategoryCreationViewController: UIViewController, UITextFieldDelegat
   }
 
   private func setupView() {
-    title = "Новая категория"
+    title = NSLocalizedString("new_category", comment: "Title for creating a new category")
     view.backgroundColor = .ypWhite
 
     let textField = UITextField()
-    textField.placeholder = "Введите название категории"
+    textField.placeholder = NSLocalizedString(
+      "category_name_placeholder", comment: "Placeholder text for category name input")
     textField.backgroundColor = .ypBackground
     textField.layer.cornerRadius = 16
     textField.translatesAutoresizingMaskIntoConstraints = false

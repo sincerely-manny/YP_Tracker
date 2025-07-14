@@ -50,7 +50,8 @@ final class TrackerViewController: UIViewController {
 
   private lazy var searchBar: UISearchBar = {
     let searchBar = UISearchBar()
-    searchBar.placeholder = "Поиск"
+    searchBar.placeholder = NSLocalizedString(
+      "search", comment: "Placeholder text for search bar")
     searchBar.searchTextField.layer.cornerRadius = 8
     searchBar.searchTextField.layer.masksToBounds = true
     searchBar.backgroundImage = UIImage()
@@ -69,7 +70,8 @@ final class TrackerViewController: UIViewController {
   }
 
   private func setupView() {
-    title = "Трекеры"
+    title = NSLocalizedString(
+      "trackers", comment: "Trackers list title")
     navigationItem.leftBarButtonItem = leftNavigationItemButton
     navigationItem.rightBarButtonItem = rightNavigationItemButton
 

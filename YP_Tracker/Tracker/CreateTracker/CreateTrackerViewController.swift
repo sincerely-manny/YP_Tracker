@@ -9,7 +9,9 @@ final class CreateTrackerViewController: UIViewController {
     didSet {
       setCreateButtonState()
       if schedule.count == 7 {
-        trackerSettingsTableView.schedule = ["Каждый день"]
+        trackerSettingsTableView.schedule = [
+          NSLocalizedString("every_day", comment: "When the whole week is selected")
+        ]
       } else {
         trackerSettingsTableView.schedule = schedule.map { $0.titleShort }
       }
@@ -43,7 +45,8 @@ final class CreateTrackerViewController: UIViewController {
 
   private lazy var habitNameTextField: UITextField = {
     let textField = UITextFieldValidated()
-    textField.placeholder = "Введите название трекера"
+    textField.placeholder = NSLocalizedString(
+      "tracker_title_placeholder", comment: "Placeholder for tracker title")
     textField.font = UIFont.systemFont(ofSize: 17, weight: .regular)
     textField.textColor = UIColor.ypBlack
     textField.translatesAutoresizingMaskIntoConstraints = false
@@ -57,7 +60,7 @@ final class CreateTrackerViewController: UIViewController {
 
   private lazy var habitNameTextFieldErrorLabel: UILabel = {
     let label = UILabel()
-    label.text = "Ограничение 38 символов"
+    label.text = NSLocalizedString("character_count_error", comment: "String is over 38 chars")
     label.textColor = UIColor.ypRed
     label.font = UIFont.systemFont(ofSize: 17, weight: .regular)
     label.translatesAutoresizingMaskIntoConstraints = false
@@ -100,7 +103,8 @@ final class CreateTrackerViewController: UIViewController {
 
   private lazy var cancelButton: UIButton = {
     let button = UIButton(type: .system)
-    button.setTitle("Отменить", for: .normal)
+    let title = NSLocalizedString("cancel", comment: "Cancel button title")
+    button.setTitle(title, for: .normal)
     button.setTitleColor(.ypRed, for: .normal)
     button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
     button.backgroundColor = .clear
@@ -114,7 +118,8 @@ final class CreateTrackerViewController: UIViewController {
 
   private lazy var createButton: UIButton = {
     let button = UIButton(type: .system)
-    button.setTitle("Создать", for: .normal)
+    let title = NSLocalizedString("create", comment: "`Create new` button title")
+    button.setTitle(title, for: .normal)
     button.setTitleColor(.ypWhite, for: .normal)
     button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
     button.backgroundColor = UIColor.ypGray
