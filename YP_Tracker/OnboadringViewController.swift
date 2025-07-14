@@ -36,10 +36,10 @@ final class OnboardingViewController: UIPageViewController, UIPageViewController
   private func setupPages() {
     let firstPage = OnboardingPageViewController(
       descriptionText: "Отслеживайте только то, что хотите",
-      backgroundImage: UIImage(named: "onboarding_background_1"))
+      backgroundImage: UIImage(resource: .onboardingBackground1))
     let secondPage = OnboardingPageViewController(
       descriptionText: "Даже если это  не литры воды и йога",
-      backgroundImage: UIImage(named: "onboarding_background_2"))
+      backgroundImage: UIImage(resource: .onboardingBackground2))
 
     pages = [firstPage, secondPage]
   }
@@ -71,7 +71,7 @@ final class OnboardingViewController: UIPageViewController, UIPageViewController
 
       pageControl.bottomAnchor.constraint(
         equalTo: nextButton.topAnchor, constant: -24),
-      pageControl.centerXAnchor.constraint(equalTo: view.centerXAnchor)
+      pageControl.centerXAnchor.constraint(equalTo: view.centerXAnchor),
     ])
   }
 
@@ -177,7 +177,7 @@ final class OnboardingPageViewController: UIViewController {
 
       descriptionLabel.bottomAnchor.constraint(equalTo: spacer.topAnchor),
       descriptionLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
-      descriptionLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16)
+      descriptionLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
     ])
   }
 
