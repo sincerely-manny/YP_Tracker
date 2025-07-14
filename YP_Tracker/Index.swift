@@ -11,11 +11,11 @@ final class IndexTabbarController: UITabBarController {
   private func setupTabs() {
     let tracker = TrackerNavigationController()
     tracker.tabBarItem = UITabBarItem(
-      title: nil, image: UIImage(named: "tracker_tabbar_item"), tag: 0)
+      title: nil, image: UIImage(resource: .trackerTabbarItem), tag: 0)
 
     let statistics = StatisticsViewController()
     statistics.tabBarItem = UITabBarItem(
-      title: "Statistics", image: UIImage(named: "statistics_tabbar_item"), tag: 1)
+      title: "Statistics", image: UIImage(resource: .statisticsTabbarItem), tag: 1)
 
     viewControllers = [tracker, statistics]
   }

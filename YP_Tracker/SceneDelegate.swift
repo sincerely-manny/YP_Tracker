@@ -17,7 +17,15 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
   ) {
     guard let windowScene = (scene as? UIWindowScene) else { return }
     window = UIWindow(windowScene: windowScene)
-    window?.rootViewController = IndexTabbarController()
+
+    window?.rootViewController =
+      PersistentState.shared.isOnboardingCompleted
+      ? IndexTabbarController()
+      : OnboardingViewController(
+        transitionStyle: .scroll,
+        navigationOrientation: .horizontal,
+        options: nil)
+
     window?.makeKeyAndVisible()
   }
 

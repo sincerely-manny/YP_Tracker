@@ -1,22 +1,17 @@
+import Combine
 import UIKit
 
 final class CategorySelectionViewController: UIViewController, UITableViewDelegate,
   UITableViewDataSource
 {
   private var tableView: UITableView?
-  var categories: [TrackerCategory] = DataProvider.shared.trackerCategoryStore.fetchCategories() {
-    didSet {
-      if !categories.isEmpty {
-        tableView?.backgroundView?.isHidden = true
-      } else {
-        tableView?.backgroundView?.isHidden = false
-      }
-      tableView?.reloadData()
-    }
-  }
-  var selectedCategory: TrackerCategory?
+  private let viewModel: CategorySelectionViewModel
+  private var cancellables = Set<AnyCancellable>()
 
-  var didSelectCategory: ((TrackerCategory) -> Void)?
+  var didSelectCategory: ((TrackerCategory) -> Void)? {
+    get { viewModel.didSelectCategory }
+    set { viewModel.didSelectCategory = newValue }
+  }
 
   private lazy var addCategoryButton: UIButton = {
     let button = UIButton(type: .system)
@@ -32,16 +27,30 @@ final class CategorySelectionViewController: UIViewController, UITableViewDelega
   }()
 
   init(selectedCategory: TrackerCategory? = nil) {
-    self.selectedCategory = selectedCategory
+    viewModel = CategorySelectionViewModel(selectedCategory: selectedCategory)
     super.init(nibName: nil, bundle: nil)
   }
 
   required init?(coder: NSCoder) {
     fatalError("init(coder:) has not been implemented")
   }
+
   override func viewDidLoad() {
     super.viewDidLoad()
     setupView()
+    bindViewModel()
+  }
+
+  private func bindViewModel() {
+    viewModel.$categories
+      .combineLatest(viewModel.$selectedCategory)
+      .receive(on: DispatchQueue.main)
+      .sink { [weak self] categories, _ in
+        guard let self else { return }
+        self.tableView?.backgroundView?.isHidden = !categories.isEmpty
+        self.tableView?.reloadData()
+      }
+      .store(in: &cancellables)
   }
 
   private func setupView() {
@@ -52,12 +61,13 @@ final class CategorySelectionViewController: UIViewController, UITableViewDelega
     addCategoryButton.translatesAutoresizingMaskIntoConstraints = false
     NSLayoutConstraint.activate([
       addCategoryButton.bottomAnchor.constraint(
-        equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -16),
+        equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -16
+      ),
       addCategoryButton.heightAnchor.constraint(equalToConstant: 60),
       addCategoryButton.leadingAnchor.constraint(
         equalTo: view.leadingAnchor, constant: 20),
       addCategoryButton.trailingAnchor.constraint(
-        equalTo: view.trailingAnchor, constant: -20)
+        equalTo: view.trailingAnchor, constant: -20),
     ])
 
     setupTableView()
@@ -67,7 +77,7 @@ final class CategorySelectionViewController: UIViewController, UITableViewDelega
       tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
       tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
       tableView.bottomAnchor.constraint(
-        equalTo: addCategoryButton.topAnchor, constant: -16)
+        equalTo: addCategoryButton.topAnchor, constant: -16),
     ])
   }
 
@@ -84,7 +94,7 @@ final class CategorySelectionViewController: UIViewController, UITableViewDelega
     tableView.backgroundView = emptyPlaceholder
     tableView.backgroundView?.frame = tableView.bounds
     tableView.backgroundView?.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-    tableView.backgroundView?.isHidden = !categories.isEmpty
+    tableView.backgroundView?.isHidden = !viewModel.categories.isEmpty
     tableView.rowHeight = 75
     tableView.separatorInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
 
@@ -93,7 +103,7 @@ final class CategorySelectionViewController: UIViewController, UITableViewDelega
   }
 
   func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-    return categories.count
+    viewModel.categories.count
   }
 
   func tableView(
@@ -105,9 +115,9 @@ final class CategorySelectionViewController: UIViewController, UITableViewDelega
     cell.textLabel?.textColor = .ypBlack
     cell.backgroundColor = .ypBackground
     cell.layer.cornerRadius = 16
-    let category = categories[indexPath.row]
+    let category = viewModel.categories[indexPath.row]
     cell.textLabel?.text = category.name
-    cell.accessoryType = (category.id == selectedCategory?.id) ? .checkmark : .none
+    cell.accessoryType = (category.id == viewModel.selectedCategory?.id) ? .checkmark : .none
     return cell
   }
 
@@ -115,23 +125,11 @@ final class CategorySelectionViewController: UIViewController, UITableViewDelega
     _ tableView: UITableView, didSelectRowAt indexPath: IndexPath
   ) {
     tableView.deselectRow(at: indexPath, animated: true)
-    let selectedCategory = categories[indexPath.row]
-    self.selectedCategory = selectedCategory
-    didSelectCategory?(selectedCategory)
-    tableView.reloadData()
+    viewModel.selectCategory(at: indexPath)
     navigationController?.popViewController(animated: true)
   }
 
   @objc private func addCategoryTapped() {
-    let categoryCreationVC = CategoryCreationViewController()
-    categoryCreationVC.didCreateCategory = { [weak self] newCategory in
-      guard let self else { return }
-      self.categories.append(newCategory)
-      self.selectedCategory = newCategory
-      self.didSelectCategory?(newCategory)
-      self.tableView?.reloadData()
-    }
-    navigationController?.pushViewController(categoryCreationVC, animated: true)
+    viewModel.addCategoryTapped(navigationController: navigationController)
   }
-
 }
