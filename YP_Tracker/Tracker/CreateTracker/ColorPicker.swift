@@ -107,7 +107,7 @@ final class ColorPicker: UICollectionView, UICollectionViewDelegate, UICollectio
         for: indexPath)
       let label = UILabel()
       label.text = NSLocalizedString("color", comment: "Title for selecting a color")
-      label.textColor = .black
+      label.textColor = .ypBlack
       label.font = UIFont.boldSystemFont(ofSize: 19)
       label.translatesAutoresizingMaskIntoConstraints = false
       header.addSubview(label)
