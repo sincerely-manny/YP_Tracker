@@ -29,6 +29,30 @@
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       shouldUseLaunchSchemeArgsEnv = "YES"
       shouldAutocreateTestPlan = "YES">
+      <Testables>
+         <TestableReference
+            skipped = "NO"
+            parallelizable = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "ED7BF6122E28B8C5001B1A13"
+               BuildableName = "YP_TrackerUITests.xctest"
+               BlueprintName = "YP_TrackerUITests"
+               ReferencedContainer = "container:YP_Tracker.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO"
+            parallelizable = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "ED7BF69E2E28BAFA001B1A13"
+               BuildableName = "YP_TrackerTests.xctest"
+               BlueprintName = "YP_TrackerTests"
+               ReferencedContainer = "container:YP_Tracker.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
+      </Testables>
    </TestAction>
    <LaunchAction
       buildConfiguration = "Debug"
