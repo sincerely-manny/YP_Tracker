@@ -11,7 +11,7 @@ extension TrackerViewController: TrackerCollectionViewCellDelegate {
         Calendar.current.isDate($0.date, inSameDayAs: selectedDate) && $0.trackerId == tracker.id
       }
     if !trackerCompletedForDate {
-      try? recordStore.addRecord(trackerId: tracker.id, date: selectedDate)
+      _ = try? recordStore.addRecord(trackerId: tracker.id, date: selectedDate)
     } else {
       try? recordStore.removeRecord(trackerId: tracker.id, date: selectedDate)
     }

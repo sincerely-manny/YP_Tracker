@@ -8,11 +8,27 @@ final class TrackerViewController: UIViewController {
   let recordStore: TrackerRecordStore = DataProvider.shared.trackerRecordStore
   let trackerCategoryStore: TrackerCategoryStore = DataProvider.shared.trackerCategoryStore
 
+  private static let filterTypeKey = "TrackerViewController.filterType"
+
   var categories: [TrackerCategory] = [] {
     didSet { setFilteredTrackers() }
   }
   var searchQuery: String = "" {
     didSet { setFilteredTrackers() }
+  }
+  var filterType: FilterType =
+    UserDefaults.standard.object(forKey: filterTypeKey) != nil
+    ? FilterType(rawValue: UserDefaults.standard.integer(forKey: filterTypeKey)) ?? .all : .all
+  {
+    didSet {
+      UserDefaults.standard.set(filterType.rawValue, forKey: Self.filterTypeKey)
+      if filterType != .all && filterType != .today {
+        filterButtonBadge.isHidden = false
+      } else {
+        filterButtonBadge.isHidden = true
+      }
+      setFilteredTrackers()
+    }
   }
   var filteredTrackers: [TrackerCategory] = [] {
     didSet { collectionView?.reloadData() }
@@ -59,6 +75,44 @@ final class TrackerViewController: UIViewController {
     return searchBar
   }()
 
+  private lazy var filterButton: UIButton = {
+    let button = UIButton(type: .system)
+    button.setTitle("Фильтры", for: .normal)
+    button.setTitleColor(.ypWhite.appearance(.light), for: .normal)
+    button.titleLabel?.font = UIFont.systemFont(ofSize: 17)
+    button.backgroundColor = .ypBlue
+    button.layer.cornerRadius = 16
+    button.clipsToBounds = true
+    button.addTarget(self, action: #selector(filterButtonTapped), for: .touchUpInside)
+    button.translatesAutoresizingMaskIntoConstraints = false
+
+    button.addSubview(filterButtonBadge)
+
+    NSLayoutConstraint.activate([
+      filterButtonBadge.widthAnchor.constraint(equalToConstant: 8),
+      filterButtonBadge.heightAnchor.constraint(equalToConstant: 8),
+      filterButtonBadge.trailingAnchor.constraint(equalTo: button.trailingAnchor, constant: -8),
+      filterButtonBadge.topAnchor.constraint(equalTo: button.topAnchor, constant: 8),
+    ])
+    if filterType != .all && filterType != .today {
+      filterButtonBadge.isHidden = false
+    } else {
+      filterButtonBadge.isHidden = true
+    }
+
+    return button
+  }()
+
+  private lazy var filterButtonBadge: UIView = {
+    let badgeView = UIView()
+    badgeView.backgroundColor = .ypRed
+    badgeView.layer.cornerRadius = 4
+    badgeView.clipsToBounds = true
+    badgeView.translatesAutoresizingMaskIntoConstraints = false
+
+    return badgeView
+  }()
+
   override func viewDidLoad() {
     super.viewDidLoad()
     trackerStore.delegate = self
@@ -99,6 +153,7 @@ final class TrackerViewController: UIViewController {
     collectionView.layoutMargins = UIEdgeInsets(
       top: 0, left: 16, bottom: 0, right: 16)
     collectionView.contentInset.top = 34
+    collectionView.contentInset.bottom = 82
     NSLayoutConstraint.activate([
       collectionView.topAnchor.constraint(equalTo: searchBar.bottomAnchor),
       collectionView.leadingAnchor.constraint(
@@ -107,6 +162,15 @@ final class TrackerViewController: UIViewController {
         equalTo: view.trailingAnchor),
       collectionView.bottomAnchor.constraint(
         equalTo: view.safeAreaLayoutGuide.bottomAnchor),
+    ])
+
+    view.addSubview(filterButton)
+    NSLayoutConstraint.activate([
+      filterButton.bottomAnchor.constraint(
+        equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -16),
+      filterButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+      filterButton.heightAnchor.constraint(equalToConstant: 50),
+      filterButton.widthAnchor.constraint(equalToConstant: 114),
     ])
 
   }
@@ -130,21 +194,54 @@ final class TrackerViewController: UIViewController {
     searchQuery = sender.text ?? ""
   }
 
+  @objc func filterButtonTapped() {
+    let viewController = FiltersViewController(selectedFilter: filterType) {
+      [weak self] filterType in
+      if filterType == .today {
+        self?.selectedDate = Date()
+        self?.datePicker.date = Date()
+      }
+
+      self?.filterType = filterType
+    }
+    viewController.title = "Фильтры"
+
+    let navigation = CreateTrackerNavigationController(rootViewController: viewController)
+    navigation.modalPresentationStyle = .formSheet
+    navigation.modalTransitionStyle = .coverVertical
+
+    present(navigation, animated: true, completion: nil)
+
+  }
+
   private func setFilteredTrackers() {
     var filtered: [TrackerCategory] = []
     let selectedDayOfWeek = Calendar.current.component(.weekday, from: selectedDate)
+    var trackersOnDateCount = 0
     for category in categories {
       let filteredTrackers = category.trackers.filter { tracker in
-        switch (
-          tracker.schedule,
-          searchQuery.isEmpty || tracker.name.localizedCaseInsensitiveContains(searchQuery)
-        ) {
-        case (let schedule?, true):
-          return schedule.contains { $0.rawValue == selectedDayOfWeek }
-        case (nil, true):
-          return true
-        case (_, false):
+        if let schedule = tracker.schedule,
+          !schedule.contains(where: { $0.rawValue == selectedDayOfWeek })
+        {
           return false
+        }
+        trackersOnDateCount += 1
+
+        guard searchQuery.isEmpty || tracker.name.localizedCaseInsensitiveContains(searchQuery)
+        else {
+          return false
+        }
+
+        let isCompleted = tracker.records.contains {
+          Calendar.current.isDate($0.date, inSameDayAs: selectedDate)
+        }
+        switch (filterType, isCompleted) {
+        case (.all, _), (.today, _):
+          return true
+        case (.completed, let isCompleted):
+          return isCompleted
+        case (.notCompleted, let isCompleted):
+          return !isCompleted
         }
       }
       if !filteredTrackers.isEmpty {
@@ -154,6 +251,11 @@ final class TrackerViewController: UIViewController {
       }
     }
     filteredTrackers = filtered
+    if trackersOnDateCount == 0 {
+      filterButton.isHidden = true
+    } else {
+      filterButton.isHidden = false
+    }
   }
 }
 
