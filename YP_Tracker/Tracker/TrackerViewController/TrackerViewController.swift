@@ -61,6 +61,12 @@ final class TrackerViewController: UIViewController {
     datePicker.tintColor = UIColor.systemBlue
     datePicker.date = selectedDate
     datePicker.addTarget(self, action: #selector(datePickerValueChanged(_:)), for: .valueChanged)
+    datePicker.backgroundColor = .ypWhite.appearance(.light)
+    datePicker.layer.cornerRadius = 8
+    datePicker.clipsToBounds = true
+    datePicker.layer.masksToBounds = true
+    datePicker.overrideUserInterfaceStyle = .light
+
     return datePicker
   }()
   private lazy var rightNavigationItemButton: UIBarButtonItem = {
