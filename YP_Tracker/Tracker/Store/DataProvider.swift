@@ -15,4 +15,26 @@ final class DataProvider: NSObject {
     super.init()
   }
 
+  static func getTrackerStore(delegate: TrackerStoreDelegate?) -> TrackerStore {
+    let context = CoreDataStack.shared.viewContext
+    let store = TrackerStore(context: context)
+    store.delegate = delegate
+    return store
+  }
+
+  static func getTrackerCategoryStore(delegate: TrackerCategoryStoreDelegate?)
+    -> TrackerCategoryStore
+  {
+    let context = CoreDataStack.shared.viewContext
+    let store = TrackerCategoryStore(context: context)
+    store.delegate = delegate
+    return store
+  }
+
+  static func getTrackerRecordStore(delegate: TrackerRecordStoreDelegate?) -> TrackerRecordStore {
+    let context = CoreDataStack.shared.viewContext
+    let store = TrackerRecordStore(context: context)
+    store.delegate = delegate
+    return store
+  }
 }
