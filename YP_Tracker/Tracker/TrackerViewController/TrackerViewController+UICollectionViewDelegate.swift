@@ -23,7 +23,7 @@ extension TrackerViewController: UICollectionViewDelegate {
           headerPreview.centerXAnchor.constraint(equalTo: previewVC.view.centerXAnchor),
           headerPreview.centerYAnchor.constraint(equalTo: previewVC.view.centerYAnchor),
           headerPreview.widthAnchor.constraint(equalToConstant: cell.header.bounds.width),
-          headerPreview.heightAnchor.constraint(equalToConstant: cell.header.bounds.height),
+          headerPreview.heightAnchor.constraint(equalToConstant: cell.header.bounds.height)
         ])
         previewVC.preferredContentSize = CGSize(
           width: cell.header.bounds.width,

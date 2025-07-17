@@ -25,7 +25,7 @@ final class StatisticsViewController: UIViewController {
     guard let trackerStore, let trackerRecordStore else { return }
     statisticsService = StatisticsService(
       trackerStore: trackerStore,
-      trackerRecordStore: trackerRecordStore,
+      trackerRecordStore: trackerRecordStore
     )
   }
 
@@ -49,7 +49,7 @@ final class StatisticsViewController: UIViewController {
           equalTo: view.safeAreaLayoutGuide.topAnchor, constant: CGFloat(index) * 102),
         item.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
         item.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
-        item.heightAnchor.constraint(equalToConstant: 90),
+        item.heightAnchor.constraint(equalToConstant: 90)
       ])
     }
 
@@ -57,7 +57,7 @@ final class StatisticsViewController: UIViewController {
     emptyView.translatesAutoresizingMaskIntoConstraints = false
     NSLayoutConstraint.activate([
       emptyView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-      emptyView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+      emptyView.centerYAnchor.constraint(equalTo: view.centerYAnchor)
     ])
     emptyView.isHidden = true
 
@@ -118,7 +118,7 @@ final class StatisticsEmpty: UIView {
     NSLayoutConstraint.activate([
       imageView.heightAnchor.constraint(equalToConstant: 80),
       imageView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16),
-      imageView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -16),
+      imageView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -16)
     ])
 
     let label = UILabel()
@@ -130,7 +130,7 @@ final class StatisticsEmpty: UIView {
     NSLayoutConstraint.activate([
       label.topAnchor.constraint(equalTo: imageView.bottomAnchor, constant: 8),
       label.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16),
-      label.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -16),
+      label.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -16)
     ])
   }
 }

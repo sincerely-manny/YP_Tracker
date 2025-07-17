@@ -66,7 +66,7 @@ final class StatisticsItem: UIView {
       backgroundView.topAnchor.constraint(equalTo: topAnchor, constant: 1),
       backgroundView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 1),
       backgroundView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -1),
-      backgroundView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -1),
+      backgroundView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -1)
     ])
 
     borderView.translatesAutoresizingMaskIntoConstraints = false
@@ -74,7 +74,7 @@ final class StatisticsItem: UIView {
       borderView.topAnchor.constraint(equalTo: topAnchor),
       borderView.leadingAnchor.constraint(equalTo: leadingAnchor),
       borderView.trailingAnchor.constraint(equalTo: trailingAnchor),
-      borderView.bottomAnchor.constraint(equalTo: bottomAnchor),
+      borderView.bottomAnchor.constraint(equalTo: bottomAnchor)
     ])
 
     addSubview(titleLabel)
@@ -88,7 +88,7 @@ final class StatisticsItem: UIView {
       titleLabel.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -12),
 
       countLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 12),
-      countLabel.topAnchor.constraint(equalTo: topAnchor, constant: 12),
+      countLabel.topAnchor.constraint(equalTo: topAnchor, constant: 12)
     ])
 
   }

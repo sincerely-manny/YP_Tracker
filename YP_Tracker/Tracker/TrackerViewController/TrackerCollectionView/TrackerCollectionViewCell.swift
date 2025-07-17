@@ -49,13 +49,13 @@ final class TrackerCollectionViewCell: UICollectionViewCell {
       emojiLabel.widthAnchor.constraint(equalToConstant: 24),
       emojiLabel.heightAnchor.constraint(equalToConstant: 24),
       emojiLabel.topAnchor.constraint(equalTo: header.topAnchor, constant: 12),
-      emojiLabel.leadingAnchor.constraint(equalTo: header.leadingAnchor, constant: 12),
+      emojiLabel.leadingAnchor.constraint(equalTo: header.leadingAnchor, constant: 12)
     ])
     header.addSubview(titleLabel)
     NSLayoutConstraint.activate([
       titleLabel.leadingAnchor.constraint(equalTo: header.leadingAnchor, constant: 12),
       titleLabel.trailingAnchor.constraint(equalTo: header.trailingAnchor, constant: -12),
-      titleLabel.bottomAnchor.constraint(equalTo: header.bottomAnchor, constant: -12),
+      titleLabel.bottomAnchor.constraint(equalTo: header.bottomAnchor, constant: -12)
     ])
 
     return header
@@ -92,7 +92,7 @@ final class TrackerCollectionViewCell: UICollectionViewCell {
       header.topAnchor.constraint(equalTo: contentView.topAnchor),
       header.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
       header.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
-      header.heightAnchor.constraint(equalToConstant: 90),
+      header.heightAnchor.constraint(equalToConstant: 90)
     ])
 
     contentView.addSubview(plusButton)
@@ -100,14 +100,14 @@ final class TrackerCollectionViewCell: UICollectionViewCell {
       plusButton.topAnchor.constraint(equalTo: header.bottomAnchor, constant: 8),
       plusButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -12),
       plusButton.widthAnchor.constraint(equalToConstant: 34),
-      plusButton.heightAnchor.constraint(equalToConstant: 34),
+      plusButton.heightAnchor.constraint(equalToConstant: 34)
     ])
 
     contentView.addSubview(progressLabel)
     NSLayoutConstraint.activate([
       progressLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 12),
       progressLabel.trailingAnchor.constraint(equalTo: plusButton.leadingAnchor, constant: -8),
-      progressLabel.centerYAnchor.constraint(equalTo: plusButton.centerYAnchor),
+      progressLabel.centerYAnchor.constraint(equalTo: plusButton.centerYAnchor)
     ])
 
   }

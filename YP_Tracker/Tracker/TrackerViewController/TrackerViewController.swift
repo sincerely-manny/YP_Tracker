@@ -100,7 +100,7 @@ final class TrackerViewController: UIViewController {
       filterButtonBadge.widthAnchor.constraint(equalToConstant: 8),
       filterButtonBadge.heightAnchor.constraint(equalToConstant: 8),
       filterButtonBadge.trailingAnchor.constraint(equalTo: button.trailingAnchor, constant: -8),
-      filterButtonBadge.topAnchor.constraint(equalTo: button.topAnchor, constant: 8),
+      filterButtonBadge.topAnchor.constraint(equalTo: button.topAnchor, constant: 8)
     ])
     if filterType != .all && filterType != .today {
       filterButtonBadge.isHidden = false
@@ -153,7 +153,7 @@ final class TrackerViewController: UIViewController {
         equalTo: view.layoutMarginsGuide.leadingAnchor),
       searchBar.trailingAnchor.constraint(
         equalTo: view.layoutMarginsGuide.trailingAnchor),
-      searchBar.heightAnchor.constraint(equalToConstant: 36),
+      searchBar.heightAnchor.constraint(equalToConstant: 36)
     ])
 
     collectionView = TrackerCollectionView(dataSource: self, delegate: self)
@@ -175,7 +175,7 @@ final class TrackerViewController: UIViewController {
       collectionView.trailingAnchor.constraint(
         equalTo: view.trailingAnchor),
       collectionView.bottomAnchor.constraint(
-        equalTo: view.safeAreaLayoutGuide.bottomAnchor),
+        equalTo: view.safeAreaLayoutGuide.bottomAnchor)
     ])
 
     view.addSubview(filterButton)
@@ -184,7 +184,7 @@ final class TrackerViewController: UIViewController {
         equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -16),
       filterButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
       filterButton.heightAnchor.constraint(equalToConstant: 50),
-      filterButton.widthAnchor.constraint(equalToConstant: 114),
+      filterButton.widthAnchor.constraint(equalToConstant: 114)
     ])
 
   }
