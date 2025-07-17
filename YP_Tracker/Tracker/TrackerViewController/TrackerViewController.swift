@@ -85,10 +85,10 @@ final class TrackerViewController: UIViewController {
         equalTo: view.layoutMarginsGuide.leadingAnchor),
       searchBar.trailingAnchor.constraint(
         equalTo: view.layoutMarginsGuide.trailingAnchor),
-      searchBar.heightAnchor.constraint(equalToConstant: 36)
+      searchBar.heightAnchor.constraint(equalToConstant: 36),
     ])
 
-    collectionView = TrackerCollectionView(dataSource: self)
+    collectionView = TrackerCollectionView(dataSource: self, delegate: self)
     guard let collectionView else {
       assertionFailure("CollectionView is nil")
       return
@@ -106,7 +106,7 @@ final class TrackerViewController: UIViewController {
       collectionView.trailingAnchor.constraint(
         equalTo: view.trailingAnchor),
       collectionView.bottomAnchor.constraint(
-        equalTo: view.safeAreaLayoutGuide.bottomAnchor)
+        equalTo: view.safeAreaLayoutGuide.bottomAnchor),
     ])
 
   }
@@ -164,6 +164,14 @@ extension TrackerViewController: CreateTrackerDelegate {
     } catch {
       assertionFailure("Failed to create tracker: \(error)")
     }
-
   }
+
+  func trackerUpdated(tracker: Tracker, categoryId: Identifier) {
+    do {
+      try trackerStore.updateTracker(with: tracker, categoryId: categoryId)
+    } catch {
+      assertionFailure("Failed to update tracker: \(error)")
+    }
+  }
+
 }

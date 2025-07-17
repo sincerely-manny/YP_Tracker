@@ -3,10 +3,11 @@ import UIKit
 final class TrackerCollectionView: UICollectionView {
   private let flowLayout = UICollectionViewFlowLayout()
 
-  init(dataSource: UICollectionViewDataSource) {
+  init(dataSource: UICollectionViewDataSource, delegate: UICollectionViewDelegate) {
     super.init(frame: .zero, collectionViewLayout: flowLayout)
 
     self.dataSource = dataSource
+    self.delegate = delegate
     register(
       TrackerCollectionViewCell.self,
       forCellWithReuseIdentifier: TrackerCollectionViewCell.identifier)

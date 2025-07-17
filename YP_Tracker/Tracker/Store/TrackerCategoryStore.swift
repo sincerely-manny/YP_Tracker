@@ -37,6 +37,8 @@ final class TrackerCategoryStore: NSObject {
   init(context: NSManagedObjectContext) {
     self.context = context
     super.init()
+    // Force FRC initialization
+    _ = fetchedResultsController
   }
 
   @discardableResult

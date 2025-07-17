@@ -2,7 +2,7 @@ import UIKit
 
 final class TrackerCollectionViewCell: UICollectionViewCell {
   static let identifier = "TrackerCollectionViewCell"
-  private var model: Tracker? = nil
+  var model: Tracker? = nil
   weak var delegate: TrackerCollectionViewCellDelegate?
 
   var isCompleted: Bool = false {
@@ -39,7 +39,7 @@ final class TrackerCollectionViewCell: UICollectionViewCell {
     return label
   }()
 
-  private lazy var header: UIView = {
+  lazy var header: UIView = {
     let header = UIView()
     header.translatesAutoresizingMaskIntoConstraints = false
     header.layer.cornerRadius = 16
@@ -49,13 +49,13 @@ final class TrackerCollectionViewCell: UICollectionViewCell {
       emojiLabel.widthAnchor.constraint(equalToConstant: 24),
       emojiLabel.heightAnchor.constraint(equalToConstant: 24),
       emojiLabel.topAnchor.constraint(equalTo: header.topAnchor, constant: 12),
-      emojiLabel.leadingAnchor.constraint(equalTo: header.leadingAnchor, constant: 12)
+      emojiLabel.leadingAnchor.constraint(equalTo: header.leadingAnchor, constant: 12),
     ])
     header.addSubview(titleLabel)
     NSLayoutConstraint.activate([
       titleLabel.leadingAnchor.constraint(equalTo: header.leadingAnchor, constant: 12),
       titleLabel.trailingAnchor.constraint(equalTo: header.trailingAnchor, constant: -12),
-      titleLabel.bottomAnchor.constraint(equalTo: header.bottomAnchor, constant: -12)
+      titleLabel.bottomAnchor.constraint(equalTo: header.bottomAnchor, constant: -12),
     ])
 
     return header
@@ -85,12 +85,14 @@ final class TrackerCollectionViewCell: UICollectionViewCell {
   }
 
   func setup() {
+    layer.cornerRadius = 16
+    layer.masksToBounds = true
     contentView.addSubview(header)
     NSLayoutConstraint.activate([
       header.topAnchor.constraint(equalTo: contentView.topAnchor),
       header.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
       header.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
-      header.heightAnchor.constraint(equalToConstant: 90)
+      header.heightAnchor.constraint(equalToConstant: 90),
     ])
 
     contentView.addSubview(plusButton)
@@ -98,14 +100,14 @@ final class TrackerCollectionViewCell: UICollectionViewCell {
       plusButton.topAnchor.constraint(equalTo: header.bottomAnchor, constant: 8),
       plusButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -12),
       plusButton.widthAnchor.constraint(equalToConstant: 34),
-      plusButton.heightAnchor.constraint(equalToConstant: 34)
+      plusButton.heightAnchor.constraint(equalToConstant: 34),
     ])
 
     contentView.addSubview(progressLabel)
     NSLayoutConstraint.activate([
       progressLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 12),
       progressLabel.trailingAnchor.constraint(equalTo: plusButton.leadingAnchor, constant: -8),
-      progressLabel.centerYAnchor.constraint(equalTo: plusButton.centerYAnchor)
+      progressLabel.centerYAnchor.constraint(equalTo: plusButton.centerYAnchor),
     ])
 
   }
@@ -122,4 +124,13 @@ final class TrackerCollectionViewCell: UICollectionViewCell {
     guard let tracker = model else { return }
     delegate?.didTapCompletionButton(for: tracker, with: self)
   }
+
+  func preview() -> UIView {
+    guard let snapshot = header.snapshotView(afterScreenUpdates: true) else {
+      return UIView()
+    }
+
+    return snapshot
+  }
+
 }

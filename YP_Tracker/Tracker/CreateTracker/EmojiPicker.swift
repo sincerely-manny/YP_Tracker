@@ -5,10 +5,11 @@ final class EmojiPicker: UICollectionView, UICollectionViewDelegate, UICollectio
 {
 
   private let emojis: [String] = [
-    "🙂", "😻", "🌺", "🐶", "❤️", "😱", "😇", "😡", "🥶", "🤔", "🙌", "🍔", "🥦", "🏓", "🥇", "🎸", "🏝", "😪"
+    "🙂", "😻", "🌺", "🐶", "❤️", "😱", "😇", "😡", "🥶", "🤔", "🙌", "🍔", "🥦", "🏓", "🥇", "🎸", "🏝", "😪",
   ]
 
   var didSelectEmoji: ((String) -> Void)?
+  var selectedEmoji: String?
 
   init() {
     let layout = UICollectionViewFlowLayout()
@@ -57,6 +58,10 @@ final class EmojiPicker: UICollectionView, UICollectionViewDelegate, UICollectio
     selectedBackgroundView.frame = cell.contentView.bounds
     cell.selectedBackgroundView = selectedBackgroundView
 
+    if let selectedEmoji, emojis[indexPath.item] == selectedEmoji {
+      selectItem(at: indexPath, animated: false, scrollPosition: [])
+    }
+
     return cell
   }
 
@@ -81,7 +86,7 @@ final class EmojiPicker: UICollectionView, UICollectionViewDelegate, UICollectio
         label.topAnchor.constraint(equalTo: header.topAnchor),
         label.leadingAnchor.constraint(equalTo: header.leadingAnchor, constant: 6),
         label.trailingAnchor.constraint(equalTo: header.trailingAnchor),
-        label.bottomAnchor.constraint(equalTo: header.bottomAnchor)
+        label.bottomAnchor.constraint(equalTo: header.bottomAnchor),
       ])
 
       return header
@@ -90,7 +95,16 @@ final class EmojiPicker: UICollectionView, UICollectionViewDelegate, UICollectio
   }
 
   func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-    let selectedEmoji = emojis[indexPath.item]
+    selectedEmoji = emojis[indexPath.item]
+    guard let selectedEmoji else { return }
     didSelectEmoji?(selectedEmoji)
+  }
+
+  func setSelected(_ emoji: String) {
+    selectedEmoji = emoji
+    if let index = emojis.firstIndex(of: emoji) {
+      let indexPath = IndexPath(item: index, section: 0)
+      selectItem(at: indexPath, animated: false, scrollPosition: [])
+    }
   }
 }

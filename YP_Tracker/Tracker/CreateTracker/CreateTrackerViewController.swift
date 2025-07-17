@@ -4,6 +4,7 @@ final class CreateTrackerViewController: UIViewController {
   weak var delegate: CreateTrackerDelegate?
 
   var trackerType: TrackerType = .habit
+  var tracker: Tracker? = nil
 
   private var schedule: [DayOfWeek] = [] {
     didSet {
@@ -155,6 +156,13 @@ final class CreateTrackerViewController: UIViewController {
     super.init(nibName: nil, bundle: nil)
   }
 
+  init(edit tracker: Tracker, category: TrackerCategory) {
+    self.trackerType = tracker.schedule == nil ? .irregularEvent : .habit
+    self.tracker = tracker
+    self.category = category
+    super.init(nibName: nil, bundle: nil)
+  }
+
   required init?(coder: NSCoder) {
     fatalError("init(coder:) has not been implemented")
   }
@@ -162,6 +170,7 @@ final class CreateTrackerViewController: UIViewController {
   override func viewDidLoad() {
     super.viewDidLoad()
     setupView()
+    configure()
   }
 
   private func setupView() {
@@ -195,7 +204,7 @@ final class CreateTrackerViewController: UIViewController {
       contentView.bottomAnchor.constraint(equalTo: scrollView.contentLayoutGuide.bottomAnchor),
 
       contentView.widthAnchor.constraint(
-        equalTo: scrollView.frameLayoutGuide.widthAnchor, constant: -32)
+        equalTo: scrollView.frameLayoutGuide.widthAnchor, constant: -32),
     ])
   }
 
@@ -206,7 +215,7 @@ final class CreateTrackerViewController: UIViewController {
       textFieldContainerView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 24),
       textFieldContainerView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
       textFieldContainerView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
-      textFieldContainerView.heightAnchor.constraint(equalToConstant: 75)
+      textFieldContainerView.heightAnchor.constraint(equalToConstant: 75),
     ])
 
     textFieldContainerView.addSubview(habitNameTextField)
@@ -217,7 +226,7 @@ final class CreateTrackerViewController: UIViewController {
         equalTo: textFieldContainerView.leadingAnchor, constant: 16),
       habitNameTextField.trailingAnchor.constraint(
         equalTo: textFieldContainerView.trailingAnchor, constant: -16),
-      habitNameTextField.heightAnchor.constraint(equalToConstant: 44)
+      habitNameTextField.heightAnchor.constraint(equalToConstant: 44),
     ])
 
     textFieldContainerView.addSubview(habitNameTextFieldErrorLabel)
@@ -228,7 +237,7 @@ final class CreateTrackerViewController: UIViewController {
       habitNameTextFieldErrorLabel.leadingAnchor.constraint(
         equalTo: textFieldContainerView.leadingAnchor),
       habitNameTextFieldErrorLabel.trailingAnchor.constraint(
-        equalTo: textFieldContainerView.trailingAnchor)
+        equalTo: textFieldContainerView.trailingAnchor),
     ])
   }
 
@@ -241,7 +250,7 @@ final class CreateTrackerViewController: UIViewController {
         equalTo: contentView.leadingAnchor),
       trackerSettingsTableView.trailingAnchor.constraint(
         equalTo: contentView.trailingAnchor),
-      trackerSettingsTableView.heightAnchor.constraint(equalToConstant: 150)
+      trackerSettingsTableView.heightAnchor.constraint(equalToConstant: 150),
     ])
   }
 
@@ -254,7 +263,7 @@ final class CreateTrackerViewController: UIViewController {
         equalTo: contentView.leadingAnchor),
       emojiPicker.trailingAnchor.constraint(
         equalTo: contentView.trailingAnchor),
-      emojiPicker.heightAnchor.constraint(equalToConstant: 224)
+      emojiPicker.heightAnchor.constraint(equalToConstant: 224),
     ])
   }
 
@@ -267,7 +276,7 @@ final class CreateTrackerViewController: UIViewController {
         equalTo: contentView.leadingAnchor),
       colorPicker.trailingAnchor.constraint(
         equalTo: contentView.trailingAnchor),
-      colorPicker.heightAnchor.constraint(equalToConstant: 224)
+      colorPicker.heightAnchor.constraint(equalToConstant: 224),
 
     ])
   }
@@ -284,7 +293,7 @@ final class CreateTrackerViewController: UIViewController {
         equalTo: colorPicker.bottomAnchor, constant: 24),
 
       bottomButtonsContainerView.bottomAnchor.constraint(
-        equalTo: contentView.bottomAnchor, constant: -16)
+        equalTo: contentView.bottomAnchor, constant: -16),
 
     ])
 
@@ -297,7 +306,7 @@ final class CreateTrackerViewController: UIViewController {
       cancelButton.topAnchor.constraint(
         equalTo: bottomButtonsContainerView.topAnchor),
       cancelButton.bottomAnchor.constraint(
-        equalTo: bottomButtonsContainerView.bottomAnchor)
+        equalTo: bottomButtonsContainerView.bottomAnchor),
     ])
 
     bottomButtonsContainerView.addSubview(createButton)
@@ -309,7 +318,7 @@ final class CreateTrackerViewController: UIViewController {
       createButton.topAnchor.constraint(
         equalTo: bottomButtonsContainerView.topAnchor),
       createButton.bottomAnchor.constraint(
-        equalTo: bottomButtonsContainerView.bottomAnchor)
+        equalTo: bottomButtonsContainerView.bottomAnchor),
 
     ])
   }
@@ -320,18 +329,26 @@ final class CreateTrackerViewController: UIViewController {
 
   @objc private func createButtonTapped() {
     guard let habitName = habitNameTextField.text, !habitName.isEmpty else { return }
-    let tracker = TrackerCreateDTO(
-      name: habitName,
-      color: color ?? "#FF6C6C",
-      emoji: emoji ?? "",
-      schedule: schedule.isEmpty ? nil : schedule
-    )
-    guard let category, let delegate else {
-      assertionFailure(
-        "Category must be set before creating a tracker and delegate must not be nil")
-      return
+    if tracker == nil {
+      let tracker = TrackerCreateDTO(
+        name: habitName,
+        color: color ?? "#FF6C6C",
+        emoji: emoji ?? "",
+        schedule: schedule.isEmpty ? nil : schedule
+      )
+      guard let category, let delegate else {
+        assertionFailure(
+          "Category must be set before creating a tracker and delegate must not be nil")
+        return
+      }
+      delegate.trackerCreated(tracker: tracker, categoryId: category.id)
+    } else {
+      guard let tracker, let categoryId = category?.id else { return }
+      let updatedTracker = Tracker(
+        id: tracker.id, name: habitName, color: color ?? "#FF6C6C", emoji: emoji ?? "",
+        schedule: schedule.isEmpty ? nil : schedule, records: tracker.records)
+      delegate?.trackerUpdated(tracker: updatedTracker, categoryId: categoryId)
     }
-    delegate.trackerCreated(tracker: tracker, categoryId: category.id)
     dismiss(animated: true)
   }
 
@@ -348,6 +365,22 @@ final class CreateTrackerViewController: UIViewController {
     }
 
     createButton.backgroundColor = createButton.isEnabled ? UIColor.ypBlack : UIColor.ypGray
+  }
+
+  private func configure() {
+    guard let tracker else { return }
+
+    habitNameTextField.text = tracker.name
+    trackerSettingsTableView.category = category?.name ?? ""
+    if let schedule = tracker.schedule {
+      self.schedule = schedule
+      scheduleSelectionViewController(didSelectDays: Set(schedule))
+    }
+
+    emojiPicker.setSelected(tracker.emoji)
+    emoji = tracker.emoji
+    colorPicker.setSelected(tracker.color)
+    color = tracker.color
   }
 }
 
@@ -377,7 +410,6 @@ extension CreateTrackerViewController: UITextFieldValidatedErrorDelegate {
 
 extension CreateTrackerViewController: ScheduleSelectionViewControllerDelegate {
   func scheduleSelectionViewController(
-    _ controller: ScheduleSelectionViewController,
     didSelectDays days: Set<DayOfWeek>
   ) {
     self.schedule = days.sorted { day1, day2 in

@@ -20,3 +20,5 @@ new_event = "Новое нерегулярное событие";
 empty_trackers_placeholder = "Что будем отслеживать?";
 trackers = "Трекеры";
 search = "Поиск";
+edit = "Редактировать";
+delete = "Удалить";

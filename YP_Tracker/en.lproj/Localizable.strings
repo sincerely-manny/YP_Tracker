@@ -20,3 +20,5 @@ new_event = "New irregular event";
 empty_trackers_placeholder = "What shall we track?";
 trackers = "Trackers";
 search = "Search";
+edit = "Edit";
+delete = "Delete";

@@ -57,7 +57,7 @@ final class ScheduleSelectionViewController: UIViewController {
         equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -16),
       doneButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
       doneButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
-      doneButton.heightAnchor.constraint(equalToConstant: 60)
+      doneButton.heightAnchor.constraint(equalToConstant: 60),
     ])
 
     view.addSubview(scheduleTableView)
@@ -66,7 +66,7 @@ final class ScheduleSelectionViewController: UIViewController {
       scheduleTableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
       scheduleTableView.leadingAnchor.constraint(equalTo: view.layoutMarginsGuide.leadingAnchor),
       scheduleTableView.trailingAnchor.constraint(equalTo: view.layoutMarginsGuide.trailingAnchor),
-      scheduleTableView.bottomAnchor.constraint(equalTo: doneButton.topAnchor, constant: -16)
+      scheduleTableView.bottomAnchor.constraint(equalTo: doneButton.topAnchor, constant: -16),
     ])
   }
 
@@ -86,7 +86,7 @@ final class ScheduleSelectionViewController: UIViewController {
   }
 
   @objc private func doneButtonTapped() {
-    delegate?.scheduleSelectionViewController(self, didSelectDays: selectedDays)
+    delegate?.scheduleSelectionViewController(didSelectDays: selectedDays)
     navigationController?.popViewController(animated: true)
   }
 
@@ -147,7 +147,6 @@ extension ScheduleSelectionViewController: UITableViewDataSource, UITableViewDel
 
 protocol ScheduleSelectionViewControllerDelegate: AnyObject {
   func scheduleSelectionViewController(
-    _ controller: ScheduleSelectionViewController,
     didSelectDays days: Set<DayOfWeek>
   )
 }

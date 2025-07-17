@@ -31,6 +31,8 @@ final class TrackerRecordStore: NSObject {
   init(context: NSManagedObjectContext) {
     self.context = context
     super.init()
+    // Force FRC initialization
+    _ = fetchedResultsController
   }
 
   @discardableResult func addRecord(trackerId: Identifier, date: Date) throws
