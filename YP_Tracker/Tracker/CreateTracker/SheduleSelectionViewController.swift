@@ -22,7 +22,8 @@ final class ScheduleSelectionViewController: UIViewController {
 
   private lazy var doneButton: UIButton = {
     let button = UIButton(type: .system)
-    button.setTitle("Готово", for: .normal)
+    let title = NSLocalizedString("done", comment: "`Done` button title")
+    button.setTitle(title, for: .normal)
     button.setTitleColor(.ypWhite, for: .normal)
     button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
     button.backgroundColor = UIColor.ypBlack
@@ -47,7 +48,7 @@ final class ScheduleSelectionViewController: UIViewController {
   }
 
   private func setupView() {
-    title = "Расписание"
+    title = NSLocalizedString("schedule", comment: "Schedule section title")
     view.backgroundColor = .ypWhite
 
     view.addSubview(doneButton)
@@ -85,7 +86,7 @@ final class ScheduleSelectionViewController: UIViewController {
   }
 
   @objc private func doneButtonTapped() {
-    delegate?.scheduleSelectionViewController(self, didSelectDays: selectedDays)
+    delegate?.scheduleSelectionViewController(didSelectDays: selectedDays)
     navigationController?.popViewController(animated: true)
   }
 
@@ -146,7 +147,6 @@ extension ScheduleSelectionViewController: UITableViewDataSource, UITableViewDel
 
 protocol ScheduleSelectionViewControllerDelegate: AnyObject {
   func scheduleSelectionViewController(
-    _ controller: ScheduleSelectionViewController,
     didSelectDays days: Set<DayOfWeek>
   )
 }

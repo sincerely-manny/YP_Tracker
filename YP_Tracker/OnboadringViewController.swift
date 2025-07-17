@@ -16,7 +16,8 @@ final class OnboardingViewController: UIPageViewController, UIPageViewController
 
   private lazy var nextButton: UIButton = {
     let button = UIButton(type: .system)
-    button.setTitle("Вот это технологии!", for: .normal)
+    let title = NSLocalizedString("onboarding_button", comment: "Button title for onboarding")
+    button.setTitle(title, for: .normal)
     button.translatesAutoresizingMaskIntoConstraints = false
     button.addTarget(self, action: #selector(nextButtonTapped), for: .touchUpInside)
     button.backgroundColor = .ypBlack.appearance(.light)
@@ -34,11 +35,16 @@ final class OnboardingViewController: UIPageViewController, UIPageViewController
   }
 
   private func setupPages() {
+    let texts = [
+      NSLocalizedString("onboarding_title_1", comment: "First onboarding page text"),
+      NSLocalizedString("onboarding_title_2", comment: "Second onboarding page text")
+    ]
+
     let firstPage = OnboardingPageViewController(
-      descriptionText: "Отслеживайте только то, что хотите",
+      descriptionText: texts[0],
       backgroundImage: UIImage(resource: .onboardingBackground1))
     let secondPage = OnboardingPageViewController(
-      descriptionText: "Даже если это  не литры воды и йога",
+      descriptionText: texts[1],
       backgroundImage: UIImage(resource: .onboardingBackground2))
 
     pages = [firstPage, secondPage]
@@ -71,7 +77,7 @@ final class OnboardingViewController: UIPageViewController, UIPageViewController
 
       pageControl.bottomAnchor.constraint(
         equalTo: nextButton.topAnchor, constant: -24),
-      pageControl.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+      pageControl.centerXAnchor.constraint(equalTo: view.centerXAnchor)
     ])
   }
 
@@ -186,7 +192,7 @@ final class OnboardingPageViewController: UIViewController {
 
       descriptionLabel.bottomAnchor.constraint(equalTo: spacer.topAnchor),
       descriptionLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
-      descriptionLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+      descriptionLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16)
     ])
   }
 

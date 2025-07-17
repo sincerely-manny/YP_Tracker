@@ -2,7 +2,7 @@ import UIKit
 
 final class TrackerCollectionViewCell: UICollectionViewCell {
   static let identifier = "TrackerCollectionViewCell"
-  private var model: Tracker? = nil
+  var model: Tracker? = nil
   weak var delegate: TrackerCollectionViewCellDelegate?
 
   var isCompleted: Bool = false {
@@ -12,15 +12,10 @@ final class TrackerCollectionViewCell: UICollectionViewCell {
   }
   var trackerCompletedTimes: Int = 0 {
     didSet {
-      var d = "дней"
-      if trackerCompletedTimes % 10 == 1 && trackerCompletedTimes % 100 != 11 {
-        d = "день"
-      } else if (trackerCompletedTimes % 10 >= 2 && trackerCompletedTimes % 10 <= 4)
-        && !(trackerCompletedTimes % 100 >= 12 && trackerCompletedTimes % 100 <= 14)
-      {
-        d = "дня"
-      }
-      progressLabel.text = "\(trackerCompletedTimes) \(d)"
+      progressLabel.text = String.localizedStringWithFormat(
+        NSLocalizedString("days_count", comment: "Tracker Completed X Times"),
+        trackerCompletedTimes
+      )
     }
   }
 
@@ -44,7 +39,7 @@ final class TrackerCollectionViewCell: UICollectionViewCell {
     return label
   }()
 
-  private lazy var header: UIView = {
+  lazy var header: UIView = {
     let header = UIView()
     header.translatesAutoresizingMaskIntoConstraints = false
     header.layer.cornerRadius = 16
@@ -90,6 +85,8 @@ final class TrackerCollectionViewCell: UICollectionViewCell {
   }
 
   func setup() {
+    layer.cornerRadius = 16
+    layer.masksToBounds = true
     contentView.addSubview(header)
     NSLayoutConstraint.activate([
       header.topAnchor.constraint(equalTo: contentView.topAnchor),
@@ -127,4 +124,13 @@ final class TrackerCollectionViewCell: UICollectionViewCell {
     guard let tracker = model else { return }
     delegate?.didTapCompletionButton(for: tracker, with: self)
   }
+
+  func preview() -> UIView {
+    guard let snapshot = header.snapshotView(afterScreenUpdates: true) else {
+      return UIView()
+    }
+
+    return snapshot
+  }
+
 }

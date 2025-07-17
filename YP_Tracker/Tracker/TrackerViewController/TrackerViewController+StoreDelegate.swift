@@ -8,6 +8,7 @@ extension TrackerViewController: TrackerStoreDelegate {
 
 extension TrackerViewController: TrackerCategoryStoreDelegate {
   func store(_ store: TrackerCategoryStore, didUpdate update: TrackerCategoryStoreUpdate) {
+
     categories = trackerCategoryStore.fetchCategories()
   }
 }

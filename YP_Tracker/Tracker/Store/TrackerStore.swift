@@ -38,6 +38,8 @@ final class TrackerStore: NSObject {
   init(context: NSManagedObjectContext) {
     self.context = context
     super.init()
+    // Force FRC initialization
+    _ = fetchedResultsController
   }
 
   @discardableResult
@@ -105,6 +107,30 @@ final class TrackerStore: NSObject {
       assertionFailure("Tracker with ID \(id) not found")
     }
   }
+
+  func updateTracker(with tracker: Tracker, categoryId: Identifier) throws {
+    if let trackerCoreData = context.object(with: tracker.id) as? TrackerCoreData {
+      trackerCoreData.name = tracker.name
+      trackerCoreData.color = tracker.color
+      trackerCoreData.emoji = tracker.emoji
+      if let schedule = tracker.schedule {
+        trackerCoreData.schedule = schedule.toJSON()
+      } else {
+        trackerCoreData.schedule = nil
+      }
+
+      let categoryCoreData = context.object(with: categoryId) as? TrackerCategoryCoreData
+      trackerCoreData.category = categoryCoreData
+
+      try context.save()
+
+      // try fetchedResultsController.performFetch()
+
+    } else {
+      assertionFailure("Tracker with ID \(tracker.id) not found")
+    }
+  }
+
 }
 
 // MARK: - NSFetchedResultsControllerDelegate
@@ -123,6 +149,7 @@ extension TrackerStore: NSFetchedResultsControllerDelegate {
     for type: NSFetchedResultsChangeType,
     newIndexPath: IndexPath?
   ) {
+
     switch type {
     case .insert:
       if let indexPath = newIndexPath {

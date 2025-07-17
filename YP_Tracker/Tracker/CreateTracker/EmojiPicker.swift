@@ -9,6 +9,7 @@ final class EmojiPicker: UICollectionView, UICollectionViewDelegate, UICollectio
   ]
 
   var didSelectEmoji: ((String) -> Void)?
+  var selectedEmoji: String?
 
   init() {
     let layout = UICollectionViewFlowLayout()
@@ -57,6 +58,10 @@ final class EmojiPicker: UICollectionView, UICollectionViewDelegate, UICollectio
     selectedBackgroundView.frame = cell.contentView.bounds
     cell.selectedBackgroundView = selectedBackgroundView
 
+    if let selectedEmoji, emojis[indexPath.item] == selectedEmoji {
+      selectItem(at: indexPath, animated: false, scrollPosition: [])
+    }
+
     return cell
   }
 
@@ -72,7 +77,7 @@ final class EmojiPicker: UICollectionView, UICollectionViewDelegate, UICollectio
         for: indexPath)
       let label = UILabel()
       label.text = "Emoji"
-      label.textColor = .black
+      label.textColor = .ypBlack
       label.font = UIFont.boldSystemFont(ofSize: 19)
       label.translatesAutoresizingMaskIntoConstraints = false
       header.addSubview(label)
@@ -90,7 +95,16 @@ final class EmojiPicker: UICollectionView, UICollectionViewDelegate, UICollectio
   }
 
   func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-    let selectedEmoji = emojis[indexPath.item]
+    selectedEmoji = emojis[indexPath.item]
+    guard let selectedEmoji else { return }
     didSelectEmoji?(selectedEmoji)
+  }
+
+  func setSelected(_ emoji: String) {
+    selectedEmoji = emoji
+    if let index = emojis.firstIndex(of: emoji) {
+      let indexPath = IndexPath(item: index, section: 0)
+      selectItem(at: indexPath, animated: false, scrollPosition: [])
+    }
   }
 }

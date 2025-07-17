@@ -1,3 +1,5 @@
+import Foundation
+
 enum TrackerType: Int, CaseIterable, Hashable {
   case habit
   case irregularEvent
@@ -5,9 +7,9 @@ enum TrackerType: Int, CaseIterable, Hashable {
   var title: String {
     switch self {
     case .habit:
-      return "Новая привычка"
+      return NSLocalizedString("new_habit", comment: "Category section title")
     case .irregularEvent:
-      return "Новое нерегулярное событие"
+      return NSLocalizedString("new_event", comment: "Category section title")
     }
   }
 }

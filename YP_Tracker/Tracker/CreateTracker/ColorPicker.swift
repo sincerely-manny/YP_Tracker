@@ -11,6 +11,7 @@ final class ColorPicker: UICollectionView, UICollectionViewDelegate, UICollectio
   ]
 
   var didSelectColor: ((String) -> Void)?
+  var selectedColor: String?
 
   init() {
     let layout = UICollectionViewFlowLayout()
@@ -92,6 +93,10 @@ final class ColorPicker: UICollectionView, UICollectionViewDelegate, UICollectio
 
     outer.translatesAutoresizingMaskIntoConstraints = false
 
+    if let selectedColor, selectedColor == colors[indexPath.item] {
+      selectItem(at: indexPath, animated: false, scrollPosition: [])
+    }
+
     return cell
   }
 
@@ -106,8 +111,8 @@ final class ColorPicker: UICollectionView, UICollectionViewDelegate, UICollectio
         withReuseIdentifier: "ColorsHeader",
         for: indexPath)
       let label = UILabel()
-      label.text = "Цвет"
-      label.textColor = .black
+      label.text = NSLocalizedString("color", comment: "Title for selecting a color")
+      label.textColor = .ypBlack
       label.font = UIFont.boldSystemFont(ofSize: 19)
       label.translatesAutoresizingMaskIntoConstraints = false
       header.addSubview(label)
@@ -127,5 +132,11 @@ final class ColorPicker: UICollectionView, UICollectionViewDelegate, UICollectio
   func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
     let selectedColor = colors[indexPath.item]
     didSelectColor?(selectedColor)
+  }
+
+  func setSelected(_ color: String) {
+    selectedColor = color
+    guard let index = colors.firstIndex(of: color) else { return }
+    selectItem(at: IndexPath(item: index, section: 0), animated: false, scrollPosition: [])
   }
 }

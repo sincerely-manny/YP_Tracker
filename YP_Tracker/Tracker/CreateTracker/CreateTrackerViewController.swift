@@ -4,12 +4,15 @@ final class CreateTrackerViewController: UIViewController {
   weak var delegate: CreateTrackerDelegate?
 
   var trackerType: TrackerType = .habit
+  var tracker: Tracker? = nil
 
   private var schedule: [DayOfWeek] = [] {
     didSet {
       setCreateButtonState()
       if schedule.count == 7 {
-        trackerSettingsTableView.schedule = ["Каждый день"]
+        trackerSettingsTableView.schedule = [
+          NSLocalizedString("every_day", comment: "When the whole week is selected")
+        ]
       } else {
         trackerSettingsTableView.schedule = schedule.map { $0.titleShort }
       }
@@ -43,7 +46,8 @@ final class CreateTrackerViewController: UIViewController {
 
   private lazy var habitNameTextField: UITextField = {
     let textField = UITextFieldValidated()
-    textField.placeholder = "Введите название трекера"
+    textField.placeholder = NSLocalizedString(
+      "tracker_title_placeholder", comment: "Placeholder for tracker title")
     textField.font = UIFont.systemFont(ofSize: 17, weight: .regular)
     textField.textColor = UIColor.ypBlack
     textField.translatesAutoresizingMaskIntoConstraints = false
@@ -57,7 +61,7 @@ final class CreateTrackerViewController: UIViewController {
 
   private lazy var habitNameTextFieldErrorLabel: UILabel = {
     let label = UILabel()
-    label.text = "Ограничение 38 символов"
+    label.text = NSLocalizedString("character_count_error", comment: "String is over 38 chars")
     label.textColor = UIColor.ypRed
     label.font = UIFont.systemFont(ofSize: 17, weight: .regular)
     label.translatesAutoresizingMaskIntoConstraints = false
@@ -100,7 +104,8 @@ final class CreateTrackerViewController: UIViewController {
 
   private lazy var cancelButton: UIButton = {
     let button = UIButton(type: .system)
-    button.setTitle("Отменить", for: .normal)
+    let title = NSLocalizedString("cancel", comment: "Cancel button title")
+    button.setTitle(title, for: .normal)
     button.setTitleColor(.ypRed, for: .normal)
     button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
     button.backgroundColor = .clear
@@ -114,7 +119,8 @@ final class CreateTrackerViewController: UIViewController {
 
   private lazy var createButton: UIButton = {
     let button = UIButton(type: .system)
-    button.setTitle("Создать", for: .normal)
+    let title = NSLocalizedString("create", comment: "`Create new` button title")
+    button.setTitle(title, for: .normal)
     button.setTitleColor(.ypWhite, for: .normal)
     button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
     button.backgroundColor = UIColor.ypGray
@@ -145,8 +151,27 @@ final class CreateTrackerViewController: UIViewController {
     return picker
   }()
 
+  private lazy var progressLabel: UILabel = {
+    let label = UILabel()
+    label.translatesAutoresizingMaskIntoConstraints = false
+    label.text = ""
+    label.font = UIFont.systemFont(ofSize: 32, weight: .bold)
+    label.textColor = .ypBlack
+    label.textAlignment = .center
+    return label
+  }()
+  var progressLabelCollapsedConstraint: NSLayoutConstraint?
+  var progressLabelExpandedConstraint: NSLayoutConstraint?
+
   init(trackerType: TrackerType = .habit) {
     self.trackerType = trackerType
+    super.init(nibName: nil, bundle: nil)
+  }
+
+  init(edit tracker: Tracker, category: TrackerCategory) {
+    self.trackerType = tracker.schedule == nil ? .irregularEvent : .habit
+    self.tracker = tracker
+    self.category = category
     super.init(nibName: nil, bundle: nil)
   }
 
@@ -157,14 +182,18 @@ final class CreateTrackerViewController: UIViewController {
   override func viewDidLoad() {
     super.viewDidLoad()
     setupView()
+    configure()
   }
 
   private func setupView() {
-    title = trackerType.title
+    if tracker == nil {
+      title = trackerType.title
+    }
     view.backgroundColor = .ypWhite
     view.layoutMargins = UIEdgeInsets(top: 24, left: 16, bottom: 0, right: 16)
 
     setupScrollView()
+    setupProgressLabel()
     setupTextField()
     setupTrackerSettingsTableView()
     setupEmojiPicker()
@@ -194,11 +223,25 @@ final class CreateTrackerViewController: UIViewController {
     ])
   }
 
+  private func setupProgressLabel() {
+    contentView.addSubview(progressLabel)
+
+    NSLayoutConstraint.activate([
+      progressLabel.topAnchor.constraint(equalTo: contentView.topAnchor),
+      progressLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
+      progressLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor)
+    ])
+
+    progressLabelExpandedConstraint = progressLabel.heightAnchor.constraint(equalToConstant: 86)
+    progressLabelCollapsedConstraint = progressLabel.heightAnchor.constraint(equalToConstant: 0)
+  }
+
   private func setupTextField() {
     contentView.addSubview(textFieldContainerView)
 
     NSLayoutConstraint.activate([
-      textFieldContainerView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 24),
+      textFieldContainerView.topAnchor.constraint(
+        equalTo: progressLabel.bottomAnchor, constant: 16),
       textFieldContainerView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
       textFieldContainerView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
       textFieldContainerView.heightAnchor.constraint(equalToConstant: 75)
@@ -315,18 +358,26 @@ final class CreateTrackerViewController: UIViewController {
 
   @objc private func createButtonTapped() {
     guard let habitName = habitNameTextField.text, !habitName.isEmpty else { return }
-    let tracker = TrackerCreateDTO(
-      name: habitName,
-      color: color ?? "#FF6C6C",
-      emoji: emoji ?? "",
-      schedule: schedule.isEmpty ? nil : schedule
-    )
-    guard let category, let delegate else {
-      assertionFailure(
-        "Category must be set before creating a tracker and delegate must not be nil")
-      return
+    if tracker == nil {
+      let tracker = TrackerCreateDTO(
+        name: habitName,
+        color: color ?? "#FF6C6C",
+        emoji: emoji ?? "",
+        schedule: schedule.isEmpty ? nil : schedule
+      )
+      guard let category, let delegate else {
+        assertionFailure(
+          "Category must be set before creating a tracker and delegate must not be nil")
+        return
+      }
+      delegate.trackerCreated(tracker: tracker, categoryId: category.id)
+    } else {
+      guard let tracker, let categoryId = category?.id else { return }
+      let updatedTracker = Tracker(
+        id: tracker.id, name: habitName, color: color ?? "#FF6C6C", emoji: emoji ?? "",
+        schedule: schedule.isEmpty ? nil : schedule, records: tracker.records)
+      delegate?.trackerUpdated(tracker: updatedTracker, categoryId: categoryId)
     }
-    delegate.trackerCreated(tracker: tracker, categoryId: category.id)
     dismiss(animated: true)
   }
 
@@ -343,6 +394,34 @@ final class CreateTrackerViewController: UIViewController {
     }
 
     createButton.backgroundColor = createButton.isEnabled ? UIColor.ypBlack : UIColor.ypGray
+  }
+
+  private func configure() {
+    guard let tracker else {
+      progressLabelExpandedConstraint?.isActive = false
+      progressLabelCollapsedConstraint?.isActive = true
+      return
+    }
+
+    progressLabelCollapsedConstraint?.isActive = false
+    progressLabelExpandedConstraint?.isActive = true
+
+    progressLabel.text = String.localizedStringWithFormat(
+      NSLocalizedString("days_count", comment: "Tracker Completed X Times"),
+      tracker.records.count
+    )
+
+    habitNameTextField.text = tracker.name
+    trackerSettingsTableView.category = category?.name ?? ""
+    if let schedule = tracker.schedule {
+      self.schedule = schedule
+      scheduleSelectionViewController(didSelectDays: Set(schedule))
+    }
+
+    emojiPicker.setSelected(tracker.emoji)
+    emoji = tracker.emoji
+    colorPicker.setSelected(tracker.color)
+    color = tracker.color
   }
 }
 
@@ -372,7 +451,6 @@ extension CreateTrackerViewController: UITextFieldValidatedErrorDelegate {
 
 extension CreateTrackerViewController: ScheduleSelectionViewControllerDelegate {
   func scheduleSelectionViewController(
-    _ controller: ScheduleSelectionViewController,
     didSelectDays days: Set<DayOfWeek>
   ) {
     self.schedule = days.sorted { day1, day2 in

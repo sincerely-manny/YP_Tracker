@@ -5,6 +5,7 @@
 //  Created by Кирилл Серебрянный on 11.06.2025.
 //
 
+import AppMetricaCore
 import CoreData
 import UIKit
 
@@ -16,7 +17,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     _ application: UIApplication,
     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
   ) -> Bool {
-    // Override point for customization after application launch.
+    if let configuration = AppMetricaConfiguration(apiKey: "f80fbf6e-f057-4679-90df-cdc0dd536b3a") {
+      AppMetrica.activate(with: configuration)
+    }
+
     return true
   }
 

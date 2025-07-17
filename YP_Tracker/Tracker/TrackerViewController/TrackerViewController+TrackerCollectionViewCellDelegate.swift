@@ -5,13 +5,14 @@ extension TrackerViewController: TrackerCollectionViewCellDelegate {
     guard selectedDate <= Date.now else {
       return
     }
+    Analytics.reportClick(screen: .main, item: .track)
     let trackerCompletedForDate =
       trackerRecords
       .contains {
         Calendar.current.isDate($0.date, inSameDayAs: selectedDate) && $0.trackerId == tracker.id
       }
     if !trackerCompletedForDate {
-      try? recordStore.addRecord(trackerId: tracker.id, date: selectedDate)
+      _ = try? recordStore.addRecord(trackerId: tracker.id, date: selectedDate)
     } else {
       try? recordStore.removeRecord(trackerId: tracker.id, date: selectedDate)
     }

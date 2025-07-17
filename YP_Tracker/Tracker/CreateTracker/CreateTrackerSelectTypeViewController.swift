@@ -13,7 +13,7 @@ final class CreateTrackerSelectTypeViewController: UIViewController {
   }
 
   private func setupView() {
-    title = "Создание трекера"
+    title = NSLocalizedString("tracker_creation", comment: "Tracker creation screen title")
     view.backgroundColor = .ypWhite
     view.addSubview(buttonsContainerView)
 
