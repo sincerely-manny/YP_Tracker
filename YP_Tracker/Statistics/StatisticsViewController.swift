@@ -16,6 +16,8 @@ final class StatisticsViewController: UIViewController {
     }
   }
 
+  private lazy var emptyView = StatisticsEmpty()
+
   init() {
     super.init(nibName: nil, bundle: nil)
     trackerStore = DataProvider.getTrackerStore(delegate: self)
@@ -51,6 +53,14 @@ final class StatisticsViewController: UIViewController {
       ])
     }
 
+    view.addSubview(emptyView)
+    emptyView.translatesAutoresizingMaskIntoConstraints = false
+    NSLayoutConstraint.activate([
+      emptyView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+      emptyView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+    ])
+    emptyView.isHidden = true
+
     trackerStatistics = statisticsService?.calculateStatistics()
   }
 
@@ -59,105 +69,21 @@ final class StatisticsViewController: UIViewController {
     ideal.count = trackerStatistics?.perfectDays ?? 0
     done.count = trackerStatistics?.trackersCompleted ?? 0
     average.count = trackerStatistics?.averageValue ?? 0
-  }
-}
 
-final class StatisticsItem: UIView {
-  var count: Int = 0 {
-    didSet {
-      updateUI()
+    if best.count + ideal.count + done.count + average.count == 0 {
+      emptyView.isHidden = false
+      best.isHidden = true
+      ideal.isHidden = true
+      done.isHidden = true
+      average.isHidden = true
+    } else {
+      emptyView.isHidden = true
+      best.isHidden = false
+      ideal.isHidden = false
+      done.isHidden = false
+      average.isHidden = false
     }
-  }
 
-  var title: String = ""
-
-  override init(frame: CGRect) {
-    super.init(frame: frame)
-    setupView()
-  }
-
-  required init?(coder: NSCoder) {
-    fatalError("init(coder:) has not been implemented")
-  }
-
-  init(title: String) {
-    self.title = title
-    super.init(frame: .zero)
-    setupView()
-  }
-
-  private lazy var titleLabel: UILabel = {
-    let label = UILabel()
-    label.text = title
-    label.font = UIFont.systemFont(ofSize: 12, weight: .medium)
-    label.textColor = .ypBlack
-    label.textAlignment = .left
-    return label
-  }()
-
-  private lazy var countLabel: UILabel = {
-    let label = UILabel()
-    label.text = String(count)
-    label.font = UIFont.systemFont(ofSize: 34, weight: .bold)
-    label.textColor = .ypBlack
-    label.textAlignment = .left
-    return label
-  }()
-
-  private func setupView() {
-    layer.cornerRadius = 16
-    clipsToBounds = true
-    layer.masksToBounds = true
-
-    let borderView = UIImageView(image: UIImage(resource: .statsBorderGradient))
-
-    borderView.contentMode = .scaleAspectFill
-    borderView.frame = bounds
-    borderView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-    addSubview(borderView)
-
-    let backgroundView = UIView()
-    backgroundView.backgroundColor = .ypWhite
-    backgroundView.layer.cornerRadius = 15
-    backgroundView.clipsToBounds = true
-    backgroundView.layer.masksToBounds = true
-    addSubview(backgroundView)
-
-    backgroundView.translatesAutoresizingMaskIntoConstraints = false
-    NSLayoutConstraint.activate([
-      backgroundView.topAnchor.constraint(equalTo: topAnchor, constant: 1),
-      backgroundView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 1),
-      backgroundView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -1),
-      backgroundView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -1),
-    ])
-
-    borderView.translatesAutoresizingMaskIntoConstraints = false
-    NSLayoutConstraint.activate([
-      borderView.topAnchor.constraint(equalTo: topAnchor),
-      borderView.leadingAnchor.constraint(equalTo: leadingAnchor),
-      borderView.trailingAnchor.constraint(equalTo: trailingAnchor),
-      borderView.bottomAnchor.constraint(equalTo: bottomAnchor),
-    ])
-
-    addSubview(titleLabel)
-    addSubview(countLabel)
-
-    titleLabel.translatesAutoresizingMaskIntoConstraints = false
-    countLabel.translatesAutoresizingMaskIntoConstraints = false
-
-    NSLayoutConstraint.activate([
-      titleLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 12),
-      titleLabel.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -12),
-
-      countLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 12),
-      countLabel.topAnchor.constraint(equalTo: topAnchor, constant: 12),
-    ])
-
-  }
-
-  private func updateUI() {
-    countLabel.text = String(count)
-    titleLabel.text = title
   }
 }
 
@@ -172,4 +98,39 @@ extension StatisticsViewController: TrackerStoreDelegate {
     trackerStatistics = statisticsService?.calculateStatistics()
   }
 
+}
+
+final class StatisticsEmpty: UIView {
+  override init(frame: CGRect) {
+    super.init(frame: frame)
+    setupView()
+  }
+
+  required init?(coder: NSCoder) {
+    fatalError("init(coder:) has not been implemented")
+  }
+
+  private func setupView() {
+    let imageView = UIImageView(image: UIImage(resource: .cryFace))
+    imageView.contentMode = .scaleAspectFit
+    imageView.translatesAutoresizingMaskIntoConstraints = false
+    addSubview(imageView)
+    NSLayoutConstraint.activate([
+      imageView.heightAnchor.constraint(equalToConstant: 80),
+      imageView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16),
+      imageView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -16),
+    ])
+
+    let label = UILabel()
+    label.text = "Анализировать пока нечего"
+    label.textAlignment = .center
+    label.font = UIFont.systemFont(ofSize: 12, weight: .medium)
+    label.translatesAutoresizingMaskIntoConstraints = false
+    addSubview(label)
+    NSLayoutConstraint.activate([
+      label.topAnchor.constraint(equalTo: imageView.bottomAnchor, constant: 8),
+      label.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16),
+      label.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -16),
+    ])
+  }
 }
