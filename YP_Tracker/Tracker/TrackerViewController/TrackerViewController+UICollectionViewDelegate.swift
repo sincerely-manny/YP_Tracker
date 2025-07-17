@@ -47,8 +47,7 @@ extension TrackerViewController: UICollectionViewDelegate {
     ) { [weak self] _ in
       guard let self else { return }
       let actionSheet = UIAlertController(
-        title: NSLocalizedString(
-          "Уверены что хотите удалить трекер?", comment: "Delete tracker confirmation title"),
+        title: "Уверены что хотите удалить трекер?",
         message: nil,
         preferredStyle: .actionSheet
       )
@@ -61,6 +60,7 @@ extension TrackerViewController: UICollectionViewDelegate {
         title: NSLocalizedString("delete", comment: "Delete action title"),
         style: .destructive
       ) { [weak self] _ in
+        Analytics.reportClick(screen: .main, item: .delete)
         guard let self else { return }
         let cell = collectionView?.cellForItem(at: indexPath) as? TrackerCollectionViewCell
         guard let id = cell?.model?.id else { return }
@@ -80,6 +80,7 @@ extension TrackerViewController: UICollectionViewDelegate {
 
     return UIAction(title: NSLocalizedString("edit", comment: "Edit action title")) {
       [weak self] _ in
+      Analytics.reportClick(screen: .main, item: .edit)
       guard let self else { return }
       let editVC = CreateTrackerViewController(edit: tracker, category: category)
       editVC.delegate = self

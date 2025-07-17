@@ -83,7 +83,9 @@ final class TrackerViewController: UIViewController {
 
   private lazy var filterButton: UIButton = {
     let button = UIButton(type: .system)
-    button.setTitle("Фильтры", for: .normal)
+    let title = NSLocalizedString(
+      "filters", comment: "Title for filter button")
+    button.setTitle(title, for: .normal)
     button.setTitleColor(.ypWhite.appearance(.light), for: .normal)
     button.titleLabel?.font = UIFont.systemFont(ofSize: 17)
     button.backgroundColor = .ypBlue
@@ -121,6 +123,7 @@ final class TrackerViewController: UIViewController {
 
   override func viewDidLoad() {
     super.viewDidLoad()
+    Analytics.reportOpen(screen: .main)
     trackerStore.delegate = self
     recordStore.delegate = self
     trackerCategoryStore.delegate = self
@@ -128,6 +131,11 @@ final class TrackerViewController: UIViewController {
     trackerRecords = recordStore.allRecords()
     setFilteredTrackers()
     setupView()
+  }
+
+  override func viewWillDisappear(_ animated: Bool) {
+    super.viewWillDisappear(animated)
+    Analytics.reportClose(screen: .main)
   }
 
   private func setupView() {
@@ -187,6 +195,7 @@ final class TrackerViewController: UIViewController {
   }
 
   @objc func leftNavigationItemButtonTapped() {
+    Analytics.reportClick(screen: .main, item: .add_track)
     let controller = CreateTrackerNavigationController(
       rootViewController: CreateTrackerSelectTypeViewController())
     controller.createTrackerDelegate = self
@@ -201,6 +210,7 @@ final class TrackerViewController: UIViewController {
   }
 
   @objc func filterButtonTapped() {
+    Analytics.reportClick(screen: .main, item: .filter)
     let viewController = FiltersViewController(selectedFilter: filterType) {
       [weak self] filterType in
       if filterType == .today {
@@ -210,7 +220,8 @@ final class TrackerViewController: UIViewController {
 
       self?.filterType = filterType
     }
-    viewController.title = "Фильтры"
+    viewController.title = NSLocalizedString(
+      "filters", comment: "Title for filter view")
 
     let navigation = CreateTrackerNavigationController(rootViewController: viewController)
     navigation.modalPresentationStyle = .formSheet

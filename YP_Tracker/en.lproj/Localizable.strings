@@ -22,3 +22,5 @@ trackers = "Trackers";
 search = "Search";
 edit = "Edit";
 delete = "Delete";
+filters = "Filters";
+statistics = "Statistics";

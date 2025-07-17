@@ -5,6 +5,7 @@ extension TrackerViewController: TrackerCollectionViewCellDelegate {
     guard selectedDate <= Date.now else {
       return
     }
+    Analytics.reportClick(screen: .main, item: .track)
     let trackerCompletedForDate =
       trackerRecords
       .contains {

@@ -22,3 +22,5 @@ trackers = "Трекеры";
 search = "Поиск";
 edit = "Редактировать";
 delete = "Удалить";
+filters = "Фильтры";
+statistics = "Статистика";
