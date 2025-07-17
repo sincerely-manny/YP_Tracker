@@ -151,6 +151,18 @@ final class CreateTrackerViewController: UIViewController {
     return picker
   }()
 
+  private lazy var progressLabel: UILabel = {
+    let label = UILabel()
+    label.translatesAutoresizingMaskIntoConstraints = false
+    label.text = ""
+    label.font = UIFont.systemFont(ofSize: 32, weight: .bold)
+    label.textColor = .ypBlack
+    label.textAlignment = .center
+    return label
+  }()
+  var progressLabelCollapsedConstraint: NSLayoutConstraint?
+  var progressLabelExpandedConstraint: NSLayoutConstraint?
+
   init(trackerType: TrackerType = .habit) {
     self.trackerType = trackerType
     super.init(nibName: nil, bundle: nil)
@@ -174,11 +186,14 @@ final class CreateTrackerViewController: UIViewController {
   }
 
   private func setupView() {
-    title = trackerType.title
+    if tracker == nil {
+      title = trackerType.title
+    }
     view.backgroundColor = .ypWhite
     view.layoutMargins = UIEdgeInsets(top: 24, left: 16, bottom: 0, right: 16)
 
     setupScrollView()
+    setupProgressLabel()
     setupTextField()
     setupTrackerSettingsTableView()
     setupEmojiPicker()
@@ -208,11 +223,25 @@ final class CreateTrackerViewController: UIViewController {
     ])
   }
 
+  private func setupProgressLabel() {
+    contentView.addSubview(progressLabel)
+
+    NSLayoutConstraint.activate([
+      progressLabel.topAnchor.constraint(equalTo: contentView.topAnchor),
+      progressLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
+      progressLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
+    ])
+
+    progressLabelExpandedConstraint = progressLabel.heightAnchor.constraint(equalToConstant: 86)
+    progressLabelCollapsedConstraint = progressLabel.heightAnchor.constraint(equalToConstant: 0)
+  }
+
   private func setupTextField() {
     contentView.addSubview(textFieldContainerView)
 
     NSLayoutConstraint.activate([
-      textFieldContainerView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 24),
+      textFieldContainerView.topAnchor.constraint(
+        equalTo: progressLabel.bottomAnchor, constant: 16),
       textFieldContainerView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
       textFieldContainerView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
       textFieldContainerView.heightAnchor.constraint(equalToConstant: 75),
@@ -368,7 +397,19 @@ final class CreateTrackerViewController: UIViewController {
   }
 
   private func configure() {
-    guard let tracker else { return }
+    guard let tracker else {
+      progressLabelExpandedConstraint?.isActive = false
+      progressLabelCollapsedConstraint?.isActive = true
+      return
+    }
+
+    progressLabelCollapsedConstraint?.isActive = false
+    progressLabelExpandedConstraint?.isActive = true
+
+    progressLabel.text = String.localizedStringWithFormat(
+      NSLocalizedString("days_count", comment: "Tracker Completed X Times"),
+      tracker.records.count
+    )
 
     habitNameTextField.text = tracker.name
     trackerSettingsTableView.category = category?.name ?? ""

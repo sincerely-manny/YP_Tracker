@@ -83,7 +83,7 @@ extension TrackerViewController: UICollectionViewDelegate {
       guard let self else { return }
       let editVC = CreateTrackerViewController(edit: tracker, category: category)
       editVC.delegate = self
-      editVC.title = NSLocalizedString("tracker_creation", comment: "Tracker creation screen title")
+      editVC.title = "Создание привычки"
 
       let navigation = CreateTrackerNavigationController(rootViewController: editVC)
       self.present(navigation, animated: true)
